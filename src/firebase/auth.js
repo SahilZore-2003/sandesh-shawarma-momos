@@ -9,15 +9,16 @@ import {
     GoogleAuthProvider,
 } from "firebase/auth";
 
-export const doCreateUserWithEmailAndPassword = async (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+const doCreateUserWithEmailAndPassword = async (email, password) => {
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    return await sendEmailVerification(user)
 };
 
-export const doSignInWithEmailAndPassword = (email, password) => {
+const doSignInWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
 };
 
-export const doSignInWithGoogle = async () => {
+const doSignInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -25,21 +26,31 @@ export const doSignInWithGoogle = async () => {
     // add user to firestore
 };
 
-export const doSignOut = () => {
+const doSignOut = () => {
     return auth.signOut();
 };
 
-export const doPasswordReset = (email) => {
+const doPasswordReset = (email) => {
     return sendPasswordResetEmail(auth, email);
 };
 
-export const doPasswordChange = (password) => {
+const doPasswordChange = (password) => {
     return updatePassword(auth.currentUser, password);
 };
 
-export const doSendEmailVerification = () => {
+const doSendEmailVerification = () => {
     return sendEmailVerification(auth.currentUser, {
         url: `${window.location.origin}/home`,
     });
 };
+
+export {
+    doCreateUserWithEmailAndPassword,
+    doSendEmailVerification,
+    doPasswordChange,
+    doPasswordReset,
+    doSignOut,
+    doSignInWithEmailAndPassword,
+    doSignInWithGoogle
+}
 

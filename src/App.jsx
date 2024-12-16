@@ -1,13 +1,23 @@
 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
+import Home from './pages/Home'
+import Register from './pages/Register'
+const App = () => {
 
-function App() {
-  
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />
+    },
+    {
+      path: "/register",
+      element: <Register />
+    },
+  ])
 
   return (
-   <div className='h-screen bg-white text-4xl text-black grid place-items-center'>
-      Abhi Showarama Shop
-   </div>
+    <RouterProvider router={router} />
   )
 }
 
