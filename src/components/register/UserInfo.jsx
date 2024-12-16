@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GoEye, GoEyeClosed } from 'react-icons/go';
 import { HiOutlineMail } from 'react-icons/hi';
 import { LuCircleUserRound } from "react-icons/lu";
 import { MdOutlinePhonelinkRing } from 'react-icons/md';
-import {doCreateUserWithEmailAndPassword} from "../../firebase/auth"
+import { doCreateUserWithEmailAndPassword } from "../../firebase/auth"
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../../firebase/firebase';
 
 const UserInfo = () => {
     const [errors, setErrors] = useState({
@@ -69,17 +71,31 @@ const UserInfo = () => {
     const handleRegisterUser = async () => {
         handleValidateData();
         try {
-            const res = await doCreateUserWithEmailAndPassword(userData.email, userData.password)
-            console.log("🚀 ~ handleRegisterUser ~ res:", res)
+            const userCredentials = await doCreateUserWithEmailAndPassword(userData.email, userData.password)
+            console.log("🚀 ~ handleRegisterUser ~ userCredentials:", userCredentials)
+
+
         } catch (error) {
             console.log(error)
         }
 
     }
 
+
+
     return (
         <div className="my-4 space-y-4">
+            {/* name field  */}
+            <div>
+                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
+                    <label htmlFor="name" className="text-inputSecondary text-xs flex items-center gap-1"><LuCircleUserRound size={12} /> Your name</label>
+                    <input value={userData?.name} type="text" name="name" onChange={handleChange} placeholder="Enter your name" className="border-0 outline-0 text-base" />
+                </div>
+                {
+                    errors.name.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">name is not valid*</small>
+                }
 
+            </div>
             {/* email field  */}
             <div>
                 <div className="w-full border-border border rounded-lg p-2 flex flex-col">
@@ -111,26 +127,18 @@ const UserInfo = () => {
 
             </div>
 
-            {/* name field  */}
-            <div>
-                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
-                    <label htmlFor="name" className="text-inputSecondary text-xs flex items-center gap-1"><LuCircleUserRound size={12} /> Your name</label>
-                    <input value={userData?.name} type="text" name="name" onChange={handleChange} placeholder="Enter your name" className="border-0 outline-0 text-base" />
-                </div>
-                {
-                    errors.name.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">name is not valid*</small>
-                }
+            {/* 
+                name field 
+           
 
-            </div>
-
-            {/* phone number field  */}
+                phone field 
             <div>
                 <div className="w-full border-border border rounded-lg p-2 flex flex-col">
                     <label htmlFor="email" className="text-inputSecondary text-xs flex items-center gap-1"><MdOutlinePhonelinkRing size={15} /> Your Phone</label>
                     <input type="tel" onChange={handleChange} name="phone" value={userData?.phone} id="" placeholder="Enter your Phone Number" className="border-0 outline-0 text-base" />
                 </div>
                 {errors.phone.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">Phone is not valid*</small>}
-            </div>
+            </div> */}
 
             <button onClick={handleRegisterUser} className="w-full bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200">Register Now</button>
 
