@@ -1,27 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GoEye, GoEyeClosed } from 'react-icons/go';
 import { HiOutlineMail } from 'react-icons/hi';
 import { LuCircleUserRound } from "react-icons/lu";
-import { MdOutlinePhonelinkRing } from 'react-icons/md';
-import { doCreateUserWithEmailAndPassword } from "../../firebase/auth"
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase/firebase';
-import Loader from '../../loaders/Loader';
+import { doSignInWithEmailAndPassword, resetPasswordWithEmail } from "../firebase/auth"
+import Loader from '../loaders/Loader';
 import { useToast } from "@/hooks/use-toast"
+import { useNavigate } from 'react-router-dom';
 
 
-const UserInfo = () => {
+const Login = () => {
     const [errors, setErrors] = useState({
         "email": "",
-        "name": "",
-        "phone": "",
         "password": ""
     });
     const navigate = useNavigate()
+
+
     const [userData, setUserData] = useState({
         "email": "",
-        "name": "",
-        "phone": "",
         "password": ""
     });
 
@@ -37,14 +33,8 @@ const UserInfo = () => {
     const handleValidateData = () => {
         const error = {
             "email": "",
-            "name": "",
             "password": ""
         };
-
-        if (userData?.name?.trim() === "") {
-            error.name = "Please enter your name";
-        }
-
         if (!userData?.password?.trim()) {
             error.password = "Please enter a valid password";
         } else if (userData.password.trim().length < 8) {
@@ -54,30 +44,17 @@ const UserInfo = () => {
         } else if (!/\d/.test(userData.password)) {
             error.password = "Password must include at least one number";
         }
-
-        if (!/^[a-zA-Z\s]+$/.test(userData?.name)) {
-            error.name = "Name must only contain alphabets and spaces";
-        }
-
-        // if (!/^\d{10}$/.test(userData?.phone)) {
-        //     error.phone = "Phone number must be 10 digits";
-        // }
-
         // Email validation
         if (!userData.email?.trim()) {
             error.email = "Please enter your email";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
             error.email = "Email is not valid";
         }
-
-        console.log(error)
-
         setErrors(error)
-
         return Object.values(error).every(value => value === "");
     };
 
-    const handleRegisterUser = async () => {
+    const handleLoginUser = async () => {
         const validate = handleValidateData();
         console.log("🚀 ~ handleRegisterUser ~ validate:", validate)
         if (!validate) {
@@ -89,21 +66,22 @@ const UserInfo = () => {
         }
         try {
             setLoading(true)
-            const userCredentials = await doCreateUserWithEmailAndPassword(userData.email, userData.password, userData.name)
+            const userCredentials = await doSignInWithEmailAndPassword(userData.email, userData.password)
             console.log("🚀 ~ handleRegisterUser ~ userCredentials:", userCredentials)
             toast({
-                title: "Register Successfully",
+                title: "Login Successfully",
                 description: "thanks for showing trust on me!!",
                 className: "bg-green-400 text-white z-[10000]"
             })
+            navigate("/home")
+
         } catch (error) {
             console.log(error)
             toast({
-                title: "Please Login",
-                description: "already account present with this email id",
-                className: "bg-green-400 text-white z-[10000]"
+                title: "Login Failed",
+                description: "incorrect email or password",
+                className: "bg-red-400 text-white z-[10000]"
             })
-            navigate("/login")
         } finally {
             setLoading(false)
         }
@@ -111,21 +89,17 @@ const UserInfo = () => {
 
     }
 
+    const handleForgotPassword = async () => {
+        if (userData.email.trim() === "") {
+            return setErrors({ email: "please enter valid email" })
+        }
+    }
+
 
 
     return (
-        <div className="my-4 space-y-4">
-            {/* name field  */}
-            <div>
-                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
-                    <label htmlFor="name" className="text-inputSecondary text-xs flex items-center gap-1"><LuCircleUserRound size={12} /> Your name</label>
-                    <input value={userData?.name} type="text" name="name" onChange={handleChange} placeholder="Enter your name" className="border-0 outline-0 text-base" />
-                </div>
-                {
-                    errors.name.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors.name}*</small>
-                }
-
-            </div>
+        <div className="my-4 space-y-4 p-4">
+            <h1 className='text-xl text-primaryText font-semibold'>Login Here 😋</h1>
             {/* email field  */}
             <div>
                 <div className="w-full border-border border rounded-lg p-2 flex flex-col">
@@ -157,29 +131,17 @@ const UserInfo = () => {
 
             </div>
 
-            {/* <div>
-                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
-                    <label htmlFor="email" className="text-inputSecondary text-xs flex items-center gap-1"><MdOutlinePhonelinkRing size={15} /> Your Phone</label>
-                    <input type="tel" onChange={handleChange} name="phone" value={userData?.phone} id="" placeholder="Enter your Phone Number" className="border-0 outline-0 text-base" />
-                </div>
-                {errors.phone.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">Phone is not valid*</small>}
-            </div> */}
-
-
-            <button onClick={handleRegisterUser} className={`w-full flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200 ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}>
+            <span onClick={handleForgotPassword} className='text-red-400 text-sm cursor-pointer font-semibold'>Forgot Password ?</span>
+            <button onClick={handleLoginUser} className={`w-full flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200 ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}>
                 {
                     loading ? <div className='flex items-center gap-2'>
                         <Loader size={15} />
                         Loading..
-                    </div> : "Register Now"
+                    </div> : "Login"
                 }
-
-
             </button>
-
-
         </div>
     )
 }
 
-export default UserInfo
+export default Login
