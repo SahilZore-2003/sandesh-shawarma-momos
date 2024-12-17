@@ -19,7 +19,7 @@
 
   ::-webkit-scrollbar-track {
     border-radius: 100vh;
-     @apply bg-secondary;
+    @apply bg-secondary;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -27,6 +27,6 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-   @apply opacity-60;
+    @apply opacity-60;
   }
 }

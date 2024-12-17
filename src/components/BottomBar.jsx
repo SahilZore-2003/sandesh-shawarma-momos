@@ -43,7 +43,7 @@ const BottomBar = ({
                             {icon}
                         </span>
                         <small className='text-xs'>{name}</small>
-                        <Beacon />
+                        {index===tabs.length-1&&<Beacon count={index} />}
                     </div>
                 ))
             }
