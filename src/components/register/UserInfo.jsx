@@ -96,7 +96,7 @@ const UserInfo = () => {
                 description: "thanks for showing trust on me!!",
                 className: "bg-green-400 text-white z-[10000]"
             })
-            navigate("/")
+            navigate("/login")
         } catch (error) {
             console.log(error)
             toast({

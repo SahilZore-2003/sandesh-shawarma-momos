@@ -12,21 +12,38 @@ import {
 } from "firebase/auth";
 
 const doCreateUserWithEmailAndPassword = async (email, password, name) => {
-
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
+    // Safety check for user.uid
+    if (!user || !user.uid) {
+        throw new Error("User UID is undefined or invalid.");
+    }
+
+    // Update the user's profile with displayName
     await updateProfile(user, {
         displayName: name,
     });
-    const userRef = doc(db, "users", user.userUID);
+
+    // Debugging UID
+    console.log("User UID:", user.uid);
+
+    // Correctly reference the user document in the 'users' collection
+    const userRef = doc(db, "users", user.uid);
+
     const userData = {
         name: user.displayName || "Anonymous",
         email: user.email || "No email provided",
         createdAt: new Date(),
     };
+
+    // Write the user data to Firestore
     await setDoc(userRef, userData, { merge: true });
+
     return user;
 };
+
+
 
 const resetPasswordWithEmail = async (email) => {
     return await sendPasswordResetEmail(auth, email)
