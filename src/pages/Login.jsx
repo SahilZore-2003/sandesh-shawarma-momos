@@ -67,13 +67,13 @@ const Login = () => {
         try {
             setLoading(true)
             const userCredentials = await doSignInWithEmailAndPassword(userData.email, userData.password)
-            console.log("🚀 ~ handleRegisterUser ~ userCredentials:", userCredentials)
+            localStorage.setItem("user", JSON.stringify(userCredentials))
             toast({
                 title: "Login Successfully",
                 description: "thanks for showing trust on me!!",
                 className: "bg-green-400 text-white z-[10000]"
             })
-            navigate("/home")
+            navigate("/")
 
         } catch (error) {
             console.log(error)
@@ -93,53 +93,65 @@ const Login = () => {
         if (userData.email.trim() === "") {
             return setErrors({ email: "please enter valid email" })
         }
+
+        const response = await resetPasswordWithEmail(userData?.email)
+        console.log("🚀 ~ handleForgotPassword ~ response:", response)
+
+
+        toast({
+            title: `"Link sent to ${userData?.email} email"`,
+            description: "please very and reset your password",
+            className: "bg-green-400 text-white "
+        })
     }
 
 
 
     return (
-        <div className="my-4 space-y-4 p-4">
-            <h1 className='text-xl text-primaryText font-semibold'>Login Here 😋</h1>
-            {/* email field  */}
-            <div>
-                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
-                    <label htmlFor="email" className="text-inputSecondary text-xs flex items-center gap-1"><HiOutlineMail size={12} />Your Email</label>
-                    <input type="text" name="email" onChange={handleChange} value={userData?.email} placeholder="Enter your email" className="border-0 outline-0 text-base" />
+        <div className='min-h-screen grid place-items-center'>
+            <div className="my-4 space-y-4 p-4 w-full">
+                <h1 className='text-2xl text-primaryText font-semibold'>Login Here 😋</h1>
+                {/* email field  */}
+                <div>
+                    <div className="w-full border-border border rounded-lg p-2 flex flex-col">
+                        <label htmlFor="email" className="text-inputSecondary text-xs flex items-center gap-1"><HiOutlineMail size={12} />Your Email</label>
+                        <input type="text" name="email" onChange={handleChange} value={userData?.email} placeholder="Enter your email" className="border-0 outline-0 text-base" />
+                    </div>
+                    {errors.email.length > 0 &&
+                        <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors.email}*</small>}
                 </div>
-                {errors.email.length > 0 &&
-                    <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors.email}*</small>}
-            </div>
-            {/* password  */}
-            <div>
-                <div className="w-full border-border border rounded-lg p-2 flex flex-col">
-                    <label htmlFor="name" className="text-inputSecondary text-xs flex items-center gap-1"><LuCircleUserRound size={12} /> Your Password</label>
-                    <div className='flex gap-2 item-center cursor-pointer'>
-                        <input value={userData?.password} type={showPassword ? "text" : "password"} name="password" onChange={handleChange} placeholder="Enter your password" className="border-0 outline-0 text-base grow" />
-                        <div onClick={() => setShowPassword(!showPassword)} className='grid place-items-center'>
-                            {
+                {/* password  */}
+                <div>
+                    <div className="w-full border-border border rounded-lg p-2 flex flex-col">
+                        <label htmlFor="name" className="text-inputSecondary text-xs flex items-center gap-1"><LuCircleUserRound size={12} /> Your Password</label>
+                        <div className='flex gap-2 item-center cursor-pointer'>
+                            <input value={userData?.password} type={showPassword ? "text" : "password"} name="password" onChange={handleChange} placeholder="Enter your password" className="border-0 outline-0 text-base grow" />
+                            <div onClick={() => setShowPassword(!showPassword)} className='grid place-items-center'>
+                                {
 
-                                !showPassword ? <GoEye size={20} className='text-primary' /> : <GoEyeClosed size={20} className='text-inputSecondary cursor-pointer' />
-                            }
+                                    !showPassword ? <GoEye size={20} className='text-primary' /> : <GoEyeClosed size={20} className='text-inputSecondary cursor-pointer' />
+                                }
+
+                            </div>
 
                         </div>
-
                     </div>
+                    {
+                        errors?.password?.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors.password}*</small>
+                    }
+
                 </div>
-                {
-                    errors.password.length > 0 && <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors.password}*</small>
-                }
 
+                <span onClick={handleForgotPassword} className='text-red-400 text-sm cursor-pointer font-semibold hover:underline inline-block'>Forgot Password ?</span>
+                <button onClick={handleLoginUser} className={`w-full flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200 ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}>
+                    {
+                        loading ? <div className='flex items-center gap-2'>
+                            <Loader size={15} />
+                            Loading..
+                        </div> : "Login"
+                    }
+                </button>
             </div>
-
-            <span onClick={handleForgotPassword} className='text-red-400 text-sm cursor-pointer font-semibold'>Forgot Password ?</span>
-            <button onClick={handleLoginUser} className={`w-full flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200 ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}>
-                {
-                    loading ? <div className='flex items-center gap-2'>
-                        <Loader size={15} />
-                        Loading..
-                    </div> : "Login"
-                }
-            </button>
         </div>
     )
 }

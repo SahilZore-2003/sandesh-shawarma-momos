@@ -4,8 +4,8 @@ import { HiOutlineMail } from 'react-icons/hi';
 import { LuCircleUserRound } from "react-icons/lu";
 import { MdOutlinePhonelinkRing } from 'react-icons/md';
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth"
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase/firebase';
+import { Link, useNavigate } from 'react-router-dom';
+
 import Loader from '../../loaders/Loader';
 import { useToast } from "@/hooks/use-toast"
 
@@ -90,12 +90,13 @@ const UserInfo = () => {
         try {
             setLoading(true)
             const userCredentials = await doCreateUserWithEmailAndPassword(userData.email, userData.password, userData.name)
-            console.log("🚀 ~ handleRegisterUser ~ userCredentials:", userCredentials)
+            localStorage.setItem("user", JSON.stringify(userCredentials))
             toast({
                 title: "Register Successfully",
                 description: "thanks for showing trust on me!!",
                 className: "bg-green-400 text-white z-[10000]"
             })
+            navigate("/")
         } catch (error) {
             console.log(error)
             toast({
@@ -103,7 +104,7 @@ const UserInfo = () => {
                 description: "already account present with this email id",
                 className: "bg-green-400 text-white z-[10000]"
             })
-            navigate("/login")
+
         } finally {
             setLoading(false)
         }
@@ -174,8 +175,9 @@ const UserInfo = () => {
                     </div> : "Register Now"
                 }
 
-
             </button>
+
+            <div className='text-sm'>Already have an account <Link to="/login" className='text-primaryText font-bold underline'>Login Here</Link></div>
 
 
         </div>

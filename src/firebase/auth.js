@@ -1,4 +1,5 @@
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -17,6 +18,13 @@ const doCreateUserWithEmailAndPassword = async (email, password, name) => {
     await updateProfile(user, {
         displayName: name,
     });
+    const userRef = doc(db, "users", user.userUID);
+    const userData = {
+        name: user.displayName || "Anonymous",
+        email: user.email || "No email provided",
+        createdAt: new Date(),
+    };
+    await setDoc(userRef, userData, { merge: true });
     return user;
 };
 

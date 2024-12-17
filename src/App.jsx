@@ -13,8 +13,8 @@ const App = () => {
       element: <Root />,
       children: [
         {
-          path: "home",
-          element: <Home />
+          path: "/",
+          element: <Home />,
         }, {
           path: "register",
           element: <Register />
