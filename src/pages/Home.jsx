@@ -1,21 +1,28 @@
-import { useEffect, useState } from "react";
-import bg from "../../public/background.jpg"
+import { useState } from "react";
+import BottomBar from "../components/BottomBar";
+import HomeContent from "../components/home/HomeContent";
+import Cart from "./Cart";
+import Orders from "./Orders";
+import Profile from "./Profile";
 const Home = () => {
-    const [showHeading, setShowHeading] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    useEffect(() => {
-        setShowHeading(true)
-    }, [])
+    const components = [
+        HomeContent,
+        Orders,
+        Profile,
+        Cart,
+    ]
     return (
-        <div style={{
-            backgroundImage: `url(${bg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "top"
-        }} className='h-screen text-center relative  text-2xl bg-white  grid place-items-center'>
-            <div className="absolute inset-0 bg-black/90 e text-4xl grid place-items-center text-white">
+        <div className="flex flex-col  h-screen">
+            <div className=" text-sm pb-[40px] grow   w-full p-2 h-full overflow-y-scroll">
 
-                <h1 className={`text-red-500 transition-transform duration-500 italic text-4xl font-semibold ${showHeading ? "translate-y-0" : "-translate-y-full"}`}>Comming <br /> <span className="text-white text-xl">Soon....</span> <br /> <span className="text-2xl  text-white inline-block"><span className="text-red-500">चिपळूण</span> कर ...</span> </h1>
+                {components[activeIndex]()}
+
+
+
             </div>
+            <BottomBar activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
         </div>
     )
 }

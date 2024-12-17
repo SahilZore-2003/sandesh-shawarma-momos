@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Register from './pages/Register'
 import Root from './pages/Root'
 import Login from './pages/Login'
+import Orders from './pages/Orders'
 const App = () => {
 
   const router = createBrowserRouter([
@@ -15,7 +16,8 @@ const App = () => {
         {
           path: "/",
           element: <Home />,
-        }, {
+        },
+        {
           path: "register",
           element: <Register />
         },
