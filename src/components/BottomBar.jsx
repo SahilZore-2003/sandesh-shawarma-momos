@@ -33,17 +33,17 @@ const BottomBar = ({
     return (
         <div className='flex bg-white items-center justify-between relative w-full z-[1000] text-black border-t border-gray-300 pt-1'>
             {
-                tabs.map(({ name, icon }, index) => (
+                tabs.map((item, index) => (
                     <div
                         onClick={() => { setActiveIndex(index) }}
                         key={index}
                         className={`flex cursor-pointer select-none flex-col relative items-center p-2 w-[25%] ${activeIndex === index ? "text-primary" : "text-black"}`}
                     >
                         <span className='inline-block text-xl'>
-                            {icon}
+                            {item.icon}
                         </span>
-                        <small className='text-xs'>{name}</small>
-                        {index===tabs.length-1&&<Beacon count={index} />}
+                        <small className='text-xs'>{item.name}</small>
+                        {index === tabs.length - 1 && <Beacon count={index} />}
                     </div>
                 ))
             }
