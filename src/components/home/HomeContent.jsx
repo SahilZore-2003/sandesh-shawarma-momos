@@ -5,7 +5,8 @@ import { TbBrandWindowsFilled } from "react-icons/tb";
 import { GiChickenOven } from "react-icons/gi";
 import { FaBowlFood } from "react-icons/fa6";
 import HomeTab from "./HomeTab";
-import itemImage from "../../../public/item1.jpg"
+
+import Items from "./Items";
 const HomeContent = () => {
     const [tab, setTab] = useState([
         {
@@ -42,21 +43,7 @@ const HomeContent = () => {
             {/* tabs  */}
             <HomeTab tab={tab} setTab={setTab} />
             {/* Home Items  */}
-            <div className="grid grid-cols-2 gap-4">
-                {
-                    Array.from({ length: 4 }).map((item, index) => (
-                        <div key={index} className="flex flex-col gap-1">
-                            <div className="relative border-2 border-primary rounded-lg overflow-hidden">
-                                <img src={itemImage} className="" alt="" />
-                            </div>
-                            <p className="mt-1  text-center text-secondaryText">Chicken Shorama</p>
-                            <h2 className="text-center text-secondaryText text-2xl">80 Rs.</h2>
-                            <button className="bg-primary rounded-full  text-white p-2">Add to cart</button>
-                        </div>
-                    ))
-                }
-
-            </div>
+           <Items tab={tab} />
         </div>
     )
 }
