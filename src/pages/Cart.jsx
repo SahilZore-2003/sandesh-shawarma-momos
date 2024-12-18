@@ -1,13 +1,42 @@
 import { RiDeleteBin6Fill } from "react-icons/ri"
-import item1 from "../../public/item1.png"
 import Image from "../components/Image"
 import { FaMinus, FaPencil, FaPlus } from "react-icons/fa6"
 import { useCart, } from "@context/cartContext"
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 const Cart = () => {
     const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item.price);
     }, 0);
+    const { error, isLoading, Razorpay } = useRazorpay();
+
+    console.log({ error, isLoading, Razorpay })
+
+    const handlePayment = () => {
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_API_KEY,
+            amount: total,
+            currency: "INR",
+            name: "Sandesh S&M",
+            description: "Test Transaction",
+            order_id: "order_9A33XWu170gUtm", // Generate order_id on server
+            handler: (response) => {
+                console.log(response);
+                alert("Payment Successful!");
+            },
+            prefill: {
+                name: "Sahil Zore",
+                email: "zoresahil80@gmail.com",
+                contact: "9356089857",
+            },
+            theme: {
+                color: "#6fcf97",
+            },
+        };
+
+        const razorpayInstance = new Razorpay(options);
+        razorpayInstance.open();
+    };
 
 
     return (
@@ -65,7 +94,7 @@ const Cart = () => {
                             </div>
                         </div>
 
-                        <button className="bg-primary p-3  rounded-md w-full text-white">Proceed to Checkout</button>
+                        <button className="bg-primary p-3  rounded-md w-full text-white" onClick={handlePayment}>Proceed to Checkout</button>
                     </div>
                 </div>
             }
