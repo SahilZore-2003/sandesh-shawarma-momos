@@ -47,20 +47,20 @@ const Items = ({ tab }) => {
             1: "shorama",
             2: "momos",
         };
-    
+
         const selectedCategory = categoryMap[selectedFilterIndex];
         const filteredData = selectedCategory
             ? itemsData.filter(item => item.category === selectedCategory)
             : itemsData;
-    
+
         const finalData = filteredData.map(item => {
             const isPresentInCart = cart?.find(cartItem => cartItem.name === item.name);
             return { ...item, addedToCart: !!isPresentInCart };
         });
-    
+
         setFilterData(finalData);
     }, [selectedFilterIndex, itemsData, cart]);
-    
+
 
     const handleDisabledAddToCart = name => {
         const index = itemsData.findIndex(item => item.name === name)
