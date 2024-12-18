@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@images": path.resolve(__dirname, "./public"),
+      "@context": path.resolve(__dirname, "./src/context"),
     },
   },
 })

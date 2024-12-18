@@ -4,29 +4,34 @@ import { BsCart } from 'react-icons/bs'
 import { FaRegUser } from 'react-icons/fa'
 import { IoHomeOutline } from 'react-icons/io5'
 import { LuListCheck } from 'react-icons/lu'
+import { useCart } from "@context/cartContext"
 
+const tabs = [
+    {
+        icon: <IoHomeOutline />,
+        name: "Home"
+    },
+    {
+        icon: <LuListCheck />,
+        name: "Orders",
+    },
+    {
+        icon: <FaRegUser />,
+        name: "Profile"
+    },
+    {
+        icon: <BsCart />,
+        name: "Cart"
+    },
+];
 const BottomBar = ({
-    activeIndex, setActiveIndex
+    activeIndex, setActiveIndex, parentRef
 }) => {
 
-    const tabs = [
-        {
-            icon: <IoHomeOutline />,
-            name: "Home"
-        },
-        {
-            icon: <LuListCheck />,
-            name: "Orders",
-        },
-        {
-            icon: <FaRegUser />,
-            name: "Profile"
-        },
-        {
-            icon: <BsCart />,
-            name: "Cart"
-        },
-    ];
+    const { cart } = useCart()
+    console.log("🚀 ~ cart:", cart)
+
+
 
     // Calculate left position based on active tab index
     const indicatorPosition = `${activeIndex * 25}%`;
@@ -35,7 +40,19 @@ const BottomBar = ({
             {
                 tabs.map((item, index) => (
                     <div
-                        onClick={() => { setActiveIndex(index) }}
+                        onClick={() => {
+                            {
+                                if (parentRef?.current) {
+                                    parentRef.current.scrollTo({
+                                        top: 0,
+                                        left: 0,
+                                        behavior: "smooth"
+                                    });
+                                }
+
+                                setActiveIndex(index);
+                            }
+                        }}
                         key={index}
                         className={`flex cursor-pointer select-none flex-col relative items-center p-2 w-[25%] ${activeIndex === index ? "text-primary" : "text-black"}`}
                     >
@@ -43,7 +60,7 @@ const BottomBar = ({
                             {item.icon}
                         </span>
                         <small className='text-xs'>{item.name}</small>
-                        {index === tabs.length - 1 && <Beacon count={index} />}
+                        {index === (tabs.length - 1) && cart.length > 0 ? <Beacon count={cart.length} /> : null}
                     </div>
                 ))
             }

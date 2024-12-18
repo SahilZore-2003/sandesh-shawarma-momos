@@ -7,6 +7,9 @@
   html {
     font-family: "Poppins", sans-serif;
   }
+  html,body{
+    height: 100%;
+  }
   :root {
     --radius: 0.5rem;
   }
