@@ -12,20 +12,22 @@ const Home = () => {
 
 
     const components = [
-        <HomeContent key={new Date().toString()} />,
-        <Orders key={new Date().toString()} />,
-        <Profile key={new Date().toString()} />,
-        <Cart key={new Date().toString()} />,
+        <HomeContent />,
+        <Orders />,
+        <Profile />,
+        <Cart />,
     ]
     return (
         <CartProvider>
-            <div className="flex flex-col  h-screen">
-                <div className=" text-sm pb-[40px] grow   w-full p-2 h-full overflow-y-scroll" ref={parentRef}>
+
+            <div className="flex flex-col max-h-screen overflow-y-hidden ">
+                <div className=" text-sm pb-24 grow   w-full p-2 h-full overflow-y-scroll" ref={parentRef}>
                     <Navbar />
                     {components[activeIndex]}
                 </div>
                 <BottomBar parentRef={parentRef} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
             </div>
+
         </CartProvider>
 
     )

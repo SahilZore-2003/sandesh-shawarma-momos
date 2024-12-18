@@ -36,7 +36,7 @@ const BottomBar = ({
     // Calculate left position based on active tab index
     const indicatorPosition = `${activeIndex * 25}%`;
     return (
-        <div className='flex bg-white items-center justify-between relative w-full z-[1000] text-black border-t border-gray-300 pt-1'>
+        <div className='flex  items-center justify-between relative w-full z-[1000] text-black border-t border-gray-300 pt-1 bg-white'>
             {
                 tabs.map((item, index) => (
                     <div

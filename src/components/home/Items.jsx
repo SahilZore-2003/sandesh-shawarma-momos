@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import item1 from "@images/item1.png"
 import item2 from "@images/item2.png"
 import item3 from "@images/item3.png"
@@ -37,10 +37,10 @@ const itemsData = [
         addedToCart: false
     },
 ]
-const Items = ({ tab }) => {
+const Items = ({ tab, setShowItem, setSelectedItem }) => {
     const selectedFilterIndex = tab.findIndex(item => item?.selected)
     const [filterData, setFilterData] = useState(itemsData);
-    const { handleAddToCart, cart } = useCart()
+    const { cart } = useCart()
 
     useEffect(() => {
         const categoryMap = {
@@ -62,28 +62,20 @@ const Items = ({ tab }) => {
     }, [selectedFilterIndex, itemsData, cart]);
 
 
-    const handleDisabledAddToCart = name => {
-        const index = itemsData.findIndex(item => item.name === name)
-        if (index !== -1) {
-            const newItems = [...itemsData];
-            newItems[index].addedToCart = true;
-            setFilterData(newItems)
-        }
-    }
+
 
     return (
         <div className="grid grid-cols-2 gap-6">
             {
-                filterData.map(({ name, image, price, category, addedToCart }, index) => (
-                    <div key={index} className="flex flex-col gap-1 border-2  pb-3 rounded-md">
+                filterData.map(({ name, image, price }, index) => (
+                    <div onClick={() => {
+                        setShowItem(true);
+                        setSelectedItem(itemsData?.find(item => item.name === name))
+                    }} key={index} className="flex flex-col gap-1 border-2  pb-3 rounded-md">
                         <Image src={image} />
                         <div className="flex flex-col items-center gap-1">
                             <p className="mt-1  text-center text-secondaryText">{name}</p>
                             <h2 className="text-center text-secondaryText text-2xl">{price} Rs.</h2>
-                            <button disabled={addedToCart} onClick={() => {
-                                handleAddToCart({ name, image, price, category });
-                                handleDisabledAddToCart(name)
-                            }} className="bg-primary disabled:pointer-events-none disabled:opacity-30 rounded-sm w-[80%]  text-white p-2 px-4">Add to cart</button>
                         </div>
                     </div>
                 ))

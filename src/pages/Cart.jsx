@@ -17,7 +17,7 @@ const Cart = () => {
             key: import.meta.env.VITE_RAZORPAY_API_KEY,
             amount: total,
             currency: "INR",
-            name: "Sandesh S&M",
+            name: "Sahil Zore",
             description: "Test Transaction",
             order_id: "order_9A33XWu170gUtm", // Generate order_id on server
             handler: (response) => {
