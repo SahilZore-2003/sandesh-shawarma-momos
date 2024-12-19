@@ -6,7 +6,7 @@ const CartContext = createContext()
 
 const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([])
-    console.log("🚀 ~ CartProvider ~ cart:", cart)
+   
 
     const handleAddToCart = data => {
         const item = cart.find(item => item.name === data.name)
@@ -30,7 +30,7 @@ const CartProvider = ({ children }) => {
     }
 
     const handleRemoveFromCart = name => {
-        setCart([...cart.filter((item)=>item.name !== name)])
+        setCart([...cart.filter((item) => item.name !== name)])
     }
 
 

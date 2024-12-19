@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <!-- Plate -->
+  <circle cx="150" cy="150" r="120" fill="#fff" stroke="#ddd" stroke-width="3" />
+  
+  <!-- Momos -->
+  <circle cx="150" cy="50" r="15" fill="#6fcf97" stroke="#e0c4a1" stroke-width="2" />
+  <circle cx="210" cy="100" r="15" fill="#6fcf97" stroke="#e0c4a1" stroke-width="2" />
+  <circle cx="190" cy="210" r="15" fill="#6fcf97" stroke="#e0c4a1" stroke-width="2" />
+  <circle cx="110" cy="210" r="15" fill="#6fcf97" stroke="#e0c4a1" stroke-width="2" />
+  <circle cx="90" cy="100" r="15" fill="#6fcf97" stroke="#e0c4a1" stroke-width="2" />
+  
+  <!-- Chutney -->
+  <circle cx="150" cy="150" r="30" fill="#6fcf97" />
+</svg>

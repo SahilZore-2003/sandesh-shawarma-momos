@@ -24,11 +24,6 @@
     width: 6px;
   }
 
-  ::-webkit-scrollbar-track {
-    border-radius: 100vh;
-    @apply bg-secondary;
-  }
-
   ::-webkit-scrollbar-thumb {
     @apply bg-primary rounded-lg;
   }

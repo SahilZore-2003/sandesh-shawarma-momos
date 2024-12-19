@@ -5,8 +5,9 @@ import { useCart, } from "@context/cartContext"
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 const Cart = () => {
     const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
+    console.log("🚀 ~ Cart ~ cart:", cart)
     const total = cart.reduce((sum, item) => {
-        return sum + item.quntity * parseFloat(item.price);
+        return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
     }, 0);
     const { error, isLoading, Razorpay } = useRazorpay();
 
@@ -48,7 +49,7 @@ const Cart = () => {
             {
                 cart.length > 0 && <div className="my-4 px-4">
                     {
-                        cart.map(({ image, category, price, quntity, name }, index) => (
+                        cart.map(({ image, category, pricing, quntity, name, type }, index) => (
                             <div key={index} className="flex items-start gap-4 border-b-2 last:border-b-0 pb-2 border-border first:mt-0 mt-2 ">
                                 <Image src={image} className={"basis-[30%] shrink-0 rounded-md"} />
                                 <div className="grow">
@@ -56,17 +57,17 @@ const Cart = () => {
                                         <div className="grow text-xl">
                                             <h2 className="font-semibold text-lg text-primaryText">{name.split(":")[0]}</h2>
                                             <div className="font-normal  text-sm text-inputSecondary">{name.split(":")[1]} </div>
-                                            <small className="font-bold text-inputSecondary">{price} rs</small>
+                                            <small className="font-bold text-inputSecondary">{pricing[type]} rs</small>
                                         </div>
                                         <RiDeleteBin6Fill onClick={() => handleRemoveFromCart(name)} size={28} className="fill-secondary hover:fill-primaryText" />
                                     </div>
                                     <div className="flex items-center justify-between gap-2 mt-2">
                                         <div className="flex items-center gap-3 p-2 rounded-full bg-[#f0f0f0] text-lg text-black">
-                                            <span onClick={() => handleDecreaseQnt({ image, category, price, quntity, name })} className="bg-white aspect-square rounded-full p-2"><FaMinus size={15} /></span>
+                                            <span onClick={() => handleDecreaseQnt({ image, category, pricing, quntity, name })} className="bg-white aspect-square rounded-full p-2"><FaMinus size={15} /></span>
                                             <span>{quntity}</span>
-                                            <span onClick={() => handleIncreaseQnt({ image, category, price, quntity, name })} className="bg-white aspect-square rounded-full p-2"><FaPlus size={15} /></span>
+                                            <span onClick={() => handleIncreaseQnt({ image, category, pricing, quntity, name })} className="bg-white aspect-square rounded-full p-2"><FaPlus size={15} /></span>
                                         </div>
-                                        <div className="text-lg font-bold text-primaryText">{quntity * price} rs</div>
+                                        <div className="text-lg font-bold text-primaryText">{quntity * pricing[type]} rs</div>
                                     </div>
                                 </div>
                             </div>

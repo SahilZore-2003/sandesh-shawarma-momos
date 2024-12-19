@@ -16,15 +16,20 @@ const HomeContent = () => {
             selected: true
         },
         {
-            title: "Shorama",
+            title: "Shawarma",
             icon: GiChickenOven,
             selected: false
         },
         {
-            title: "Momos",
+            title: "veg Momos",
             icon: FaBowlFood,
             selected: false
-        }
+        },
+        {
+            title: "nonveg Momos",
+            icon: FaBowlFood,
+            selected: false
+        },
     ]);
     const [showItem, setShowItem] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
