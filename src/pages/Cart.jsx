@@ -2,28 +2,67 @@ import { RiDeleteBin6Fill } from "react-icons/ri"
 import Image from "../components/Image"
 import { FaMinus, FaPencil, FaPlus } from "react-icons/fa6"
 import { useCart, } from "@context/cartContext"
-import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import { useRazorpay } from "react-razorpay";
+import { useToast } from "../hooks/use-toast"
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../firebase/firebase"
+
 const Cart = () => {
     const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
-    console.log("🚀 ~ Cart ~ cart:", cart)
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
     }, 0);
-    const { error, isLoading, Razorpay } = useRazorpay();
+    // const { error, isLoading, Razorpay } = useRazorpay();
+    const { Razorpay } = useRazorpay();
+    const { user } = JSON.parse(localStorage.getItem('user'))
+    const { uid, email } = user;
+    const { toast } = useToast()
+    console.log("🚀 ~ Cart ~ uid:", uid)
 
-    console.log({ error, isLoading, Razorpay })
+
 
     const handlePayment = () => {
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_API_KEY,
+            key: import.meta.env.VITE_RAZORPAY_API_KEY_PRODUCTION,
+            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY_PRODUCTION,
             amount: total,
             currency: "INR",
             name: "Sahil Zore",
             description: "Test Transaction",
             order_id: "order_9A33XWu170gUtm", // Generate order_id on server
-            handler: (response) => {
-                console.log(response);
-                alert("Payment Successful!");
+            handler: async function (response) {
+
+                // console.log(response)
+                toast({
+                    title: "Please fill correct information..",
+                    description: "",
+                    className: "bg-green-400 text-white "
+                })
+
+                const paymentId = response.razorpay_payment_id
+                // store in firebase 
+                const orderInfo = {
+                    cart,
+                    // addressInfo,
+                    date: new Date().toLocaleString(
+                        "en-US",
+                        {
+                            month: "short",
+                            day: "2-digit",
+                            year: "numeric",
+                        }
+                    ),
+                    email: email,
+                    userid: uid,
+                    paymentId
+                }
+
+                try {
+                    const result = await addDoc(collection(db, uid), orderInfo)
+                    console.log("🚀 ~ handlePayment ~ result:", result)
+                } catch (error) {
+                    console.log(error)
+                }
             },
             prefill: {
                 name: "Sahil Zore",
