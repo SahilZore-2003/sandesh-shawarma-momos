@@ -50,11 +50,12 @@ const Cart = () => {
                     {
                         cart.map(({ image, category, price, quntity, name }, index) => (
                             <div key={index} className="flex items-start gap-4 border-b-2 last:border-b-0 pb-2 border-border first:mt-0 mt-2 ">
-                                <Image src={image} className={"basis-[30%] rounded-md"} />
+                                <Image src={image} className={"basis-[30%] shrink-0 rounded-md"} />
                                 <div className="grow">
                                     <div className="grow flex gap-2 items-center">
                                         <div className="grow text-xl">
-                                            <h2 className="font-semibold text-lg text-primaryText">{name}</h2>
+                                            <h2 className="font-semibold text-lg text-primaryText">{name.split(":")[0]}</h2>
+                                            <div className="font-normal  text-sm text-inputSecondary">{name.split(":")[1]} </div>
                                             <small className="font-bold text-inputSecondary">{price} rs</small>
                                         </div>
                                         <RiDeleteBin6Fill onClick={() => handleRemoveFromCart(name)} size={28} className="fill-secondary hover:fill-primaryText" />

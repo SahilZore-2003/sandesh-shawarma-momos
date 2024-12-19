@@ -65,7 +65,7 @@ const Items = ({ tab, setShowItem, setSelectedItem }) => {
 
 
     return (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 pb-16 gap-6">
             {
                 filterData.map(({ name, image, price }, index) => (
                     <div onClick={() => {
