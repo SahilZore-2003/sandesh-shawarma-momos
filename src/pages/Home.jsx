@@ -19,7 +19,6 @@ const Home = () => {
     ]
     return (
         <CartProvider>
-
             <div className="flex flex-col max-h-screen overflow-y-hidden ">
                 <div className=" text-sm pb-24 grow   w-full p-2 h-full overflow-y-scroll" ref={parentRef}>
                     <Navbar />
@@ -27,7 +26,6 @@ const Home = () => {
                 </div>
                 <BottomBar parentRef={parentRef} activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
             </div>
-
         </CartProvider>
 
     )
