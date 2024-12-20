@@ -15,7 +15,7 @@ const Home = () => {
         <HomeContent />,
         <Orders />,
         <Profile />,
-        <Cart />,
+        <Cart setActiveIndex={setActiveIndex} />,
     ]
     return (
         <CartProvider>

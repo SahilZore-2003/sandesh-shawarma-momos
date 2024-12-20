@@ -4,21 +4,22 @@ import { FaMinus, FaPencil, FaPlus } from "react-icons/fa6"
 import { useCart, } from "@context/cartContext"
 import { useRazorpay } from "react-razorpay";
 import { useToast } from "../hooks/use-toast"
-import { addDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase"
+import { useState } from "react";
+import Loader from "../loaders/Loader";
 
-const Cart = () => {
+
+const Cart = ({setActiveIndex}) => {
     const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
     }, 0);
-    // const { error, isLoading, Razorpay } = useRazorpay();
     const { Razorpay } = useRazorpay();
     const { user } = JSON.parse(localStorage.getItem('user'))
     const { uid, email } = user;
-    const { toast } = useToast()
-    
-
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
     const generateOrderId = async () => {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/order`, {
@@ -32,49 +33,56 @@ const Cart = () => {
             if (!res.ok) {
                 throw new Error(`HTTP error! Status: ${res.status}`);
             }
+            const response = await res.json()
 
-            return res.id;
-
+            return response.id
         } catch (error) {
             console.error("Error:", error.message); // Handle errors
         }
 
     }
 
-    const handlePayment = () => {
-        const orderId = generateOrderId();
+    const handlePayment = async () => {
+        setLoading(true)
+        const orderId = await generateOrderId()
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_API_KEY_PRODUCTION,
-            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY_PRODUCTION,
+            key: import.meta.env.VITE_RAZORPAY_API_KEY,
+            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY,
             amount: total * 100,
             currency: "INR",
             name: "Sahil Zore",
             description: "Test Transaction",
-            order_id: orderId, // Generate order_id on server
+            order_id: orderId,
             handler: async function (response) {
                 // Payment successful
                 const paymentId = response.razorpay_payment_id;
 
                 const orderInfo = {
-                    order: cart,
+                    order: { ...cart, totalBill: total },
                     date: new Date().toLocaleString("en-US", {
                         month: "short",
                         day: "2-digit",
                         year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true, // Ensures the time is in 12-hour format with am/pm
                     }),
                     email: email,
                     userid: uid,
                     paymentId,
+                    "orderId": orderId,
                 };
 
                 try {
-                    const result = await addDoc(collection(db, uid), orderInfo);
-                    console.log("🚀 ~ handlePayment ~ result:", result);
+                    const orderDocRef = doc(db, 'orders', uid, orderId, orderInfo?.date);
+                    await setDoc(orderDocRef, { ...orderInfo });
                     toast({
                         title: "Payment Successful!",
                         description: "Your order has been placed.",
                         className: "bg-green-400 text-white",
                     });
+                    setLoading(false)
+                    setActiveIndex(1)
                 } catch (error) {
                     console.error("Error storing order:", error);
                 }
@@ -89,6 +97,7 @@ const Cart = () => {
             },
             modal: {
                 ondismiss: function () {
+                    setLoading(false)
                     toast({
                         title: "Payment Canceled",
                         description: "You Cancel the payment",
@@ -102,8 +111,10 @@ const Cart = () => {
         razorpayInstance.open();
     };
 
+
+
     return (
-        <div className=''>
+        <div className='pb-12  '>
             <h1 className="font-bold text-primaryText text-xl px-4">{
                 cart.length ? "Cart Items" : "Cart Is Empty"
 
@@ -158,7 +169,15 @@ const Cart = () => {
                             </div>
                         </div>
 
-                        <button className="bg-primary p-3  rounded-md w-full text-white" onClick={handlePayment}>Proceed to Checkout</button>
+                        <button className={`bg-primary p-3 text-xl  rounded-md w-full text-white ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`} onClick={handlePayment}>
+                            {
+                                loading ? <div className="flex items-center justify-center gap-2">
+                                    <Loader size={25} />
+                                    <span className="text-xl">Loading..</span>
+                                </div> : "Checkout"
+                            }
+
+                        </button>
                     </div>
                 </div>
             }

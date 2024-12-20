@@ -29,7 +29,7 @@ const BottomBar = ({
 }) => {
 
     const { cart } = useCart()
-    console.log("🚀 ~ cart:", cart)
+ 
 
 
 
