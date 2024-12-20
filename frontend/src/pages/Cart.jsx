@@ -19,49 +19,64 @@ const Cart = () => {
     const { toast } = useToast()
     console.log("🚀 ~ Cart ~ uid:", uid)
 
+    const generateOrderId = async () => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/order`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ amount: total }) // Add the required data
+            });
 
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+
+            return res.id;
+
+        } catch (error) {
+            console.error("Error:", error.message); // Handle errors
+        }
+
+    }
 
     const handlePayment = () => {
+        const orderId = generateOrderId();
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_API_KEY,
-            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY,
-            amount: total,
+            key: import.meta.env.VITE_RAZORPAY_API_KEY_PRODUCTION,
+            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY_PRODUCTION,
+            amount: total * 100,
             currency: "INR",
             name: "Sahil Zore",
             description: "Test Transaction",
-            order_id: "order_9A33XWu170gUtm", // Generate order_id on server
+            order_id: orderId, // Generate order_id on server
             handler: async function (response) {
+                // Payment successful
+                const paymentId = response.razorpay_payment_id;
 
-                // console.log(response)
-                toast({
-                    title: "Please fill correct information..",
-                    description: "",
-                    className: "bg-green-400 text-white "
-                })
-
-                const paymentId = response.razorpay_payment_id
-                // store in firebase 
                 const orderInfo = {
-                    cart,
-                    // addressInfo,
-                    date: new Date().toLocaleString(
-                        "en-US",
-                        {
-                            month: "short",
-                            day: "2-digit",
-                            year: "numeric",
-                        }
-                    ),
+                    order: cart,
+                    date: new Date().toLocaleString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                    }),
                     email: email,
                     userid: uid,
-                    paymentId
-                }
+                    paymentId,
+                };
 
                 try {
-                    const result = await addDoc(collection(db, uid), orderInfo)
-                    console.log("🚀 ~ handlePayment ~ result:", result)
+                    const result = await addDoc(collection(db, uid), orderInfo);
+                    console.log("🚀 ~ handlePayment ~ result:", result);
+                    toast({
+                        title: "Payment Successful!",
+                        description: "Your order has been placed.",
+                        className: "bg-green-400 text-white",
+                    });
                 } catch (error) {
-                    console.log(error)
+                    console.error("Error storing order:", error);
                 }
             },
             prefill: {
@@ -72,11 +87,21 @@ const Cart = () => {
             theme: {
                 color: "#6fcf97",
             },
+            modal: {
+                ondismiss: function () {
+                    toast({
+                        title: "Payment Canceled",
+                        description: "You Cancel the payment",
+                        className: "bg-red-400 text-white",
+                    });
+                },
+            },
         };
 
         const razorpayInstance = new Razorpay(options);
         razorpayInstance.open();
     };
+
 
 
     return (
