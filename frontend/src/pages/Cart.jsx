@@ -17,7 +17,7 @@ const Cart = () => {
     const { user } = JSON.parse(localStorage.getItem('user'))
     const { uid, email } = user;
     const { toast } = useToast()
-    console.log("🚀 ~ Cart ~ uid:", uid)
+    
 
     const generateOrderId = async () => {
         try {
@@ -101,8 +101,6 @@ const Cart = () => {
         const razorpayInstance = new Razorpay(options);
         razorpayInstance.open();
     };
-
-
 
     return (
         <div className=''>
