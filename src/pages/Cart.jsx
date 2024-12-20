@@ -23,8 +23,8 @@ const Cart = () => {
 
     const handlePayment = () => {
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_API_KEY_PRODUCTION,
-            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY_PRODUCTION,
+            key: import.meta.env.VITE_RAZORPAY_API_KEY,
+            key_secret: import.meta.env.VITE_RAZORPAY_SECRET_KEY,
             amount: total,
             currency: "INR",
             name: "Sahil Zore",
