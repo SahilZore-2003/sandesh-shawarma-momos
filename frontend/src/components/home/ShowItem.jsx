@@ -122,11 +122,13 @@ const ShowItem = ({
 
 
                 <div className="p-4">
-                    <div className="relative">
-                        <h2 className="font-bold text-xl">{selectedItem?.name}</h2>
-                        <h1 className="text-secondaryText text-2xl font-bold"> {selectedItem?.category === "momos" ? selectedItem?.pricing[momos[selectedType]] : selectedItem?.pricing[shawarma[selectedType]]} rs.</h1>
-                        <p className="text-lg text-inputPrimary">{selectedItem?.category === "momos" ? `${momos[selectedType]}, ${selectedType ? "10" : "5"} pices` : shawarma[selectedType]}</p>
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                    <div className="flex gap-4">
+                        <div className="grow">
+                            <h2 className="font-bold text-xl">{selectedItem?.name}</h2>
+                            <h1 className="text-secondaryText text-2xl font-bold"> {selectedItem?.category === "momos" ? selectedItem?.pricing[momos[selectedType]] : selectedItem?.pricing[shawarma[selectedType]]} rs.</h1>
+                            <p className="text-lg text-inputPrimary">{selectedItem?.category === "momos" ? `${momos[selectedType]}, ${selectedType ? "10" : "5"} pices` : shawarma[selectedType]}</p>
+                        </div>
+                        <div className="">
                             <FoodType type={selectedItem?.veg} />
                         </div>
                     </div>

@@ -10,7 +10,7 @@ import { useState } from "react";
 import Loader from "../loaders/Loader";
 
 
-const Cart = ({setActiveIndex}) => {
+const Cart = ({ setActiveIndex }) => {
     const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
@@ -20,6 +20,11 @@ const Cart = ({setActiveIndex}) => {
     const { uid, email } = user;
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
+
+    const handlePaymentChange = (e) => {
+        setPaymentMethod(e.target.value);
+    };
     const generateOrderId = async () => {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/payment/order`, {
@@ -42,6 +47,78 @@ const Cart = ({setActiveIndex}) => {
 
     }
 
+    const paymentHandler = async (response, orderId) => {
+        // Payment successful
+        const paymentId = response.razorpay_payment_id;
+
+        const orderInfo = {
+            order: { ...cart, totalBill: total },
+            date: new Date().toLocaleString("en-US", {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true, // Ensures the time is in 12-hour format with am/pm
+            }),
+            email: email,
+            userid: uid,
+            paymentId,
+            "orderId": orderId,
+            paymentMethod,
+        };
+
+        try {
+            const orderDocRef = doc(db, 'orders', uid, orderId, orderInfo?.date);
+            await setDoc(orderDocRef, { ...orderInfo });
+            toast({
+                title: "Payment Successful!",
+                description: "Your order has been placed.",
+                className: "bg-green-400 text-white",
+            });
+            setLoading(false)
+            setActiveIndex(1)
+        } catch (error) {
+            console.error("Error storing order:", error);
+        }
+    }
+
+    const handleCashOnDelivery = async () => {
+        const orderId = await generateOrderId()
+        const orderInfo = {
+            order: { ...cart, totalBill: total },
+            date: new Date().toLocaleString("en-US", {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true, // Ensures the time is in 12-hour format with am/pm
+            }),
+            orderId: orderId,
+            email: email,
+            userid: uid,
+            paymentMethod,
+        };
+
+        try {
+            setLoading(true)
+            const orderDocRef = doc(db, 'orders', uid, orderId, orderInfo?.date);
+            await setDoc(orderDocRef, { ...orderInfo });
+            toast({
+                title: "Payment Successful!",
+                description: "Your order has been placed.",
+                className: "bg-green-400 text-white",
+            });
+            setActiveIndex(1)
+        } catch (error) {
+            console.error("Error storing order:", error);
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
     const handlePayment = async () => {
         setLoading(true)
         const orderId = await generateOrderId()
@@ -53,40 +130,7 @@ const Cart = ({setActiveIndex}) => {
             name: "Sahil Zore",
             description: "Test Transaction",
             order_id: orderId,
-            handler: async function (response) {
-                // Payment successful
-                const paymentId = response.razorpay_payment_id;
-
-                const orderInfo = {
-                    order: { ...cart, totalBill: total },
-                    date: new Date().toLocaleString("en-US", {
-                        month: "short",
-                        day: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true, // Ensures the time is in 12-hour format with am/pm
-                    }),
-                    email: email,
-                    userid: uid,
-                    paymentId,
-                    "orderId": orderId,
-                };
-
-                try {
-                    const orderDocRef = doc(db, 'orders', uid, orderId, orderInfo?.date);
-                    await setDoc(orderDocRef, { ...orderInfo });
-                    toast({
-                        title: "Payment Successful!",
-                        description: "Your order has been placed.",
-                        className: "bg-green-400 text-white",
-                    });
-                    setLoading(false)
-                    setActiveIndex(1)
-                } catch (error) {
-                    console.error("Error storing order:", error);
-                }
-            },
+            handler: (response) => paymentHandler(response, orderId),
             prefill: {
                 name: "Sahil Zore",
                 email: "zoresahil80@gmail.com",
@@ -107,8 +151,13 @@ const Cart = ({setActiveIndex}) => {
             },
         };
 
-        const razorpayInstance = new Razorpay(options);
-        razorpayInstance.open();
+        if (paymentMethod === "cash on delivery") {
+            handleCashOnDelivery()
+        } else {
+            const razorpayInstance = new Razorpay(options);
+            razorpayInstance.open();
+        }
+
     };
 
 
@@ -148,24 +197,61 @@ const Cart = ({setActiveIndex}) => {
                     }
 
                     <div className="mt-5 space-y-3">
-                        <h1 className="font-bold text-primaryText text-lg">Address</h1>
-                        <div className="flex items-center gap-2 border border-border p-2 rounded-md">
-                            <p>Sadguru apartment room no:34 Dhabasi vasti....</p>
-                            <span><FaPencil className="fill-primaryText cursor-pointer hover:fill-secondary" size={20} /></span>
+                        {/* address details  */}
+                        <div>
+                            <h1 className="font-bold text-primaryText text-lg">Address</h1>
+                            <div className="flex items-center gap-2 border border-border p-2 rounded-md">
+                                <p>Sadguru apartment room no:34 Dhabasi vasti....</p>
+                                <span><FaPencil className="fill-primaryText cursor-pointer hover:fill-secondary" size={20} /></span>
+                            </div>
                         </div>
-                        <h1 className="font-bold text-primaryText text-lg">Order Summary</h1>
-                        <div className="bg-[#f2f2f2] p-2 rounded-md text-secondaryText font-semibold text-sm flex flex-col gap-2">
-                            <div className="flex items-center justify-between gap-2 w-full">
-                                <span>Sub Total</span>
-                                <span>{total} rs</span>
+                        {/* order summary  */}
+                        <div>
+                            <h1 className="font-bold text-primaryText text-lg">Order Summary</h1>
+                            <div className="bg-[#f2f2f2] p-2 mt-2 rounded-md text-secondaryText font-semibold text-sm flex flex-col gap-2">
+                                <div className="flex items-center justify-between gap-2 w-full">
+                                    <span>Sub Total</span>
+                                    <span>{total} rs</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-2 w-full">
+                                    <span>Tax</span>
+                                    <span>0 rs</span>
+                                </div>
+                                <div className="flex items-center justify-between gap-2 w-full border-t-2 border-dashed pt-2 border-border text-lg font-bold">
+                                    <span>Total</span>
+                                    <span>{total} rs</span>
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between gap-2 w-full">
-                                <span>Tax</span>
-                                <span>0 rs</span>
+                        </div>
+                        {/* payment modes */}
+                        <div className="bg-white border border-border p-2 mt-2 rounded-md text-secondaryText font-semibold text-sm flex flex-col gap-2">
+                            <div className="flex items-center gap-2 text-sm">
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="cash on delivery"
+                                    checked={paymentMethod === "cash on delivery"}
+                                    onChange={handlePaymentChange}
+                                    id={"cod"}
+                                    className="peer hidden"
+
+                                />
+                                <span className="inline-block size-4 border border-black rounded-full peer-checked:bg-primary bg-white"></span>
+                                <label htmlFor="cod" className="inline-block">Cash on delivery</label>
+
                             </div>
-                            <div className="flex items-center justify-between gap-2 w-full border-t-2 border-dashed pt-2 border-border text-lg font-bold">
-                                <span>Total</span>
-                                <span>{total} rs</span>
+                            <div className="flex items-center gap-2 text-sm">
+                                <input
+                                    id={"online"}
+                                    type="radio"
+                                    name="payment"
+                                    value="pay online"
+                                    checked={paymentMethod === "pay online"}
+                                    onChange={handlePaymentChange}
+                                    className=" hidden peer"
+                                />
+                                <span className="inline-block size-4 border border-black rounded-full peer-checked:bg-primary bg-white"></span>
+                                <label htmlFor="online" className="inline-block">Pay Online</label>
                             </div>
                         </div>
 
