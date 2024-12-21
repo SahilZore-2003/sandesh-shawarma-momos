@@ -52,7 +52,7 @@ const Cart = ({ setActiveIndex }) => {
         const paymentId = response.razorpay_payment_id;
 
         const orderInfo = {
-            order: { ...cart, totalBill: total },
+            order: { ...cart},
             date: new Date().toLocaleString("en-US", {
                 month: "short",
                 day: "2-digit",
@@ -61,6 +61,7 @@ const Cart = ({ setActiveIndex }) => {
                 minute: "2-digit",
                 hour12: true, // Ensures the time is in 12-hour format with am/pm
             }),
+            totalBill: total,
             email: email,
             userid: uid,
             paymentId,
@@ -86,7 +87,7 @@ const Cart = ({ setActiveIndex }) => {
     const handleCashOnDelivery = async () => {
         const orderId = await generateOrderId()
         const orderInfo = {
-            order: { ...cart, totalBill: total },
+            order: { ...cart },
             date: new Date().toLocaleString("en-US", {
                 month: "short",
                 day: "2-digit",
@@ -95,6 +96,7 @@ const Cart = ({ setActiveIndex }) => {
                 minute: "2-digit",
                 hour12: true, // Ensures the time is in 12-hour format with am/pm
             }),
+            totalBill: total,
             orderId: orderId,
             email: email,
             userid: uid,
@@ -103,8 +105,15 @@ const Cart = ({ setActiveIndex }) => {
 
         try {
             setLoading(true)
-            const orderDocRef = doc(db, 'orders', uid, orderId, orderInfo?.date);
-            await setDoc(orderDocRef, { ...orderInfo });
+            const orderRef = doc(db, "orders", uid);
+            await setDoc(
+                orderRef,
+                {
+                    [orderId]: orderInfo
+                },
+                { merge: true } // Merge ensures it updates only the specific `orderId`
+            );
+
             toast({
                 title: "Payment Successful!",
                 description: "Your order has been placed.",
@@ -224,7 +233,8 @@ const Cart = ({ setActiveIndex }) => {
                             </div>
                         </div>
                         {/* payment modes */}
-                        <div className="bg-white border border-border p-2 mt-2 rounded-md text-secondaryText font-semibold text-sm flex flex-col gap-2">
+                        <h1 className="font-bold text-primaryText text-lg">Payment Method</h1>
+                        <div className="bg-white border border-border p-2  rounded-md text-secondaryText font-semibold text-sm flex flex-col gap-2">
                             <div className="flex items-center gap-2 text-sm">
                                 <input
                                     type="radio"

@@ -7,7 +7,7 @@ import Profile from "./Profile";
 import Navbar from "../components/Navbar";
 import { CartProvider } from "../context/cartContext";
 const Home = () => {
-    const [activeIndex, setActiveIndex] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(1);
     const parentRef = useRef()
 
 
