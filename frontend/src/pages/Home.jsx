@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BottomBar from "../components/BottomBar";
 import HomeContent from "../components/home/HomeContent";
 import Cart from "./Cart";
@@ -6,9 +6,18 @@ import Orders from "./Orders";
 import Profile from "./Profile";
 import Navbar from "../components/Navbar";
 import { CartProvider } from "../context/cartContext";
+import { generateToken, messaging } from "../firebase/firebase";
+import { onMessage } from "firebase/messaging";
 const Home = () => {
-    const [activeIndex, setActiveIndex] = useState(1);
+    const [activeIndex, setActiveIndex] = useState(0);
     const parentRef = useRef()
+
+    useEffect(() => {
+        generateToken()
+        onMessage(messaging, (payload) => {
+            console.log(payload)
+        })
+    }, [])
 
 
     const components = [
