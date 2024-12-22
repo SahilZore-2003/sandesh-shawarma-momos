@@ -51,7 +51,7 @@ const Orders = () => {
         fetchAllOrdersForUser(uid);
     }, [])
     return (
-        <div className="relative">
+        <div className="relative pb-16">
             {
                 loading && <div className="min-h-[calc(100vh-92px)] grid place-items-center">
                     <Loader size={50} />
