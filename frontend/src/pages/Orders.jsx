@@ -4,6 +4,12 @@ import { useToast } from "../hooks/use-toast"
 import { db } from "../firebase/firebase"
 import { getDoc, doc } from "firebase/firestore";
 import Loader from "../loaders/Loader";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
 const Orders = () => {
     const { user } = JSON.parse(localStorage.getItem('user'))
     const { uid } = user;
@@ -53,58 +59,117 @@ const Orders = () => {
     return (
         <div className="relative pb-16">
             {
-                loading && <div className="min-h-[calc(100vh-92px)] grid place-items-center">
+                !loading && orders?.length > 0 ?
+                    <Tabs defaultValue="account" className="w-full">
+                        <TabsList className={"w-full mb-4"}>
+                            <TabsTrigger className={"w-1/2"} value="account">Latest Order</TabsTrigger>
+                            <TabsTrigger className={"w-1/2"} value="password">Total Orders  ({orders?.length})</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="account">
+                            <div className="flex gap-4 relative border-b-2 border-inputSecondary pb-2 pt-4 first:pt-0">
+                                <IoMdListBox size={25} className="text-primary" />
+                                <div className="grow">
+                                    <h2 className="text-xl font-normal">Order Summary</h2>
+
+                                    <p className="">
+                                        {orders[0]?.date}
+                                    </p>
+                                    <div className="border-b-2 border-dashed border-black pb-2">
+                                        {
+                                            orders[0]?.order?.map((item, index) => (
+                                                <div key={index} className="mt-2 flex items-center justify-between gap-4 font-normal">
+                                                    <p className="basis-full"> <span className="font-bold">{item?.quntity}x</span>{item?.name}</p>
+                                                    <p className="basis-[20%] text-end shrink-0 font-bold">{item?.price * item?.quntity}</p>
+                                                </div>
+                                            ))
+                                        }
+
+
+                                    </div>
+                                    <div className="border-b-2 border-dashed border-black py-2 font-bold">
+                                        <div className="flex items-center justify-between">
+                                            <p>subtotal</p>
+                                            <p>{orders[0]?.totalBill}</p>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <p>Delivery Charges</p>
+                                            <p>0</p>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <p>Payment Mode</p>
+                                            <p>{orders[0]?.paymentMethod}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center py-1 text-lg justify-between font-bold">
+                                        <p className="">Total</p>
+                                        <p>{orders[0]?.totalBill}</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="password">
+                            {
+                                orders?.map(({
+                                    date, paymentMethod, order, totalBill
+                                }, index) => (
+                                    <div key={index} className="flex gap-4 relative border-b-2 border-inputSecondary pb-2 pt-4 first:pt-0">
+                                        <IoMdListBox size={25} className="text-primary" />
+                                        <div className="grow">
+                                            <h2 className="text-xl font-normal">Order Summary</h2>
+
+                                            <p className="">
+                                                {date}
+                                            </p>
+                                            <div className="border-b-2 border-dashed border-black pb-2">
+                                                {
+                                                    order?.map((item, index) => (
+                                                        <div key={index} className="mt-2 flex items-center justify-between gap-4 font-normal">
+                                                            <p className="basis-full"> <span className="font-bold">{item?.quntity}x</span>{item?.name}</p>
+                                                            <p className="basis-[20%] text-end shrink-0 font-bold">{item?.price * item?.quntity}</p>
+                                                        </div>
+                                                    ))
+                                                }
+
+
+                                            </div>
+                                            <div className="border-b-2 border-dashed border-black py-2 font-bold">
+                                                <div className="flex items-center justify-between">
+                                                    <p>subtotal</p>
+                                                    <p>{totalBill}</p>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <p>Delivery Charges</p>
+                                                    <p>0</p>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    <p>Payment Mode</p>
+                                                    <p>{paymentMethod}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center py-1 text-lg justify-between font-bold">
+                                                <p className="">Total</p>
+                                                <p>{totalBill}</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </TabsContent>
+                    </Tabs>
+                    : <div className="h-[50vh] grid place-items-center"><div className="font-bold text-xl text-center text-primary">No order availabel..</div></div>
+            }
+
+
+            {
+                loading && <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000]">
                     <Loader size={50} />
                 </div>
             }
 
 
-            {
-                !loading && orders?.length > 0 ? orders?.map(({
-                    date, paymentMethod, order, totalBill
-                }, index) => (
-                    <div key={index} className="flex gap-4 relative border-b-2 border-inputSecondary pb-2 pt-4 first:pt-0">
-                        <IoMdListBox size={25} className="text-primary" />
-                        <div className="grow">
-                            <h2 className="text-xl font-normal">Order Summary</h2>
-                            <p className="">
-                                {date}
-                            </p>
-                            <div className="border-b-2 border-dashed border-black pb-2">
-                                {
-                                    order?.map((item, index) => (
-                                        <div key={index} className="mt-2 flex items-center justify-between gap-4 font-normal">
-                                            <p className="basis-full"> <span className="font-bold">{item?.quntity}x</span>{item?.name}</p>
-                                            <p className="basis-[20%] text-end shrink-0 font-bold">{item?.price * item?.quntity}</p>
-                                        </div>
-                                    ))
-                                }
 
-
-                            </div>
-                            <div className="border-b-2 border-dashed border-black py-2 font-bold">
-                                <div className="flex items-center justify-between">
-                                    <p>subtotal</p>
-                                    <p>{totalBill}</p>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <p>Delivery Charges</p>
-                                    <p>0</p>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <p>Payment Mode</p>
-                                    <p>{paymentMethod}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center py-1 text-lg justify-between font-bold">
-                                <p className="">Total</p>
-                                <p>{totalBill}</p>
-                            </div>
-
-                        </div>
-                    </div>
-                )) : <div className="h-[50vh] grid place-items-center"><div className="font-bold text-xl text-center text-primary">No order availabel..</div></div>
-            }
 
         </div>
     )
