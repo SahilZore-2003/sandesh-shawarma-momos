@@ -17,6 +17,7 @@ const Cart = ({ setActiveIndex }) => {
     }, 0);
     const { Razorpay } = useRazorpay();
     const { user } = JSON.parse(localStorage.getItem('user'))
+    console.log("🚀 ~ Cart ~ user:", user)
     const { uid, email } = user;
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -52,7 +53,7 @@ const Cart = ({ setActiveIndex }) => {
         const paymentId = response.razorpay_payment_id;
 
         const orderInfo = {
-            order: { ...cart},
+            order: { ...cart },
             date: new Date().toLocaleString("en-US", {
                 month: "short",
                 day: "2-digit",
@@ -77,6 +78,7 @@ const Cart = ({ setActiveIndex }) => {
                 description: "Your order has been placed.",
                 className: "bg-green-400 text-white",
             });
+            sendSms()
             setLoading(false)
             setActiveIndex(1)
         } catch (error) {
@@ -119,12 +121,35 @@ const Cart = ({ setActiveIndex }) => {
                 description: "Your order has been placed.",
                 className: "bg-green-400 text-white",
             });
+            sendSms()
             setActiveIndex(1)
         } catch (error) {
             console.error("Error storing order:", error);
         } finally {
             setLoading(false)
         }
+    }
+
+    const sendSms = async () => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/sms`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: `Hello Sahil new order is place now from ${email}. [sandesh Shawarma & Momos]` }) // Add the required data
+            });
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            const response = await res.json()
+
+            return response
+        } catch (error) {
+            console.error("Error:", error.message); // Handle errors
+        }
+
     }
 
 
