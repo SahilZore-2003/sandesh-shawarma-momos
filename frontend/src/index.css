@@ -45,3 +45,7 @@
   display: none;
   /* Chrome, Safari, Opera */
 }
+
+div[role="dialog"] button svg {
+  display: none !important;
+}

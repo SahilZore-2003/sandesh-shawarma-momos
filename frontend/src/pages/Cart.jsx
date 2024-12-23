@@ -17,11 +17,11 @@ const Cart = ({ setActiveIndex }) => {
     }, 0);
     const { Razorpay } = useRazorpay();
     const { user } = JSON.parse(localStorage.getItem('user'))
-    console.log("🚀 ~ Cart ~ user:", user)
     const { uid, email } = user;
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
+    const sendMessages = false;
 
     const handlePaymentChange = (e) => {
         setPaymentMethod(e.target.value);
@@ -131,6 +131,10 @@ const Cart = ({ setActiveIndex }) => {
     }
 
     const sendSms = async () => {
+        if (!sendMessages) {
+            console.log("inside sendmessage return ")
+            return null
+        }
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/sms`, {
                 method: "POST",
