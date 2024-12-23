@@ -59,7 +59,7 @@ const Orders = () => {
     return (
         <div className="relative pb-16">
             {
-                !loading && orders?.length > 0 ?
+                !loading ? orders?.length > 0 ?
                     <Tabs defaultValue="account" className="w-full">
                         <TabsList className={"w-full mb-4"}>
                             <TabsTrigger className={"w-1/2"} value="account">Latest Order</TabsTrigger>
@@ -159,18 +159,15 @@ const Orders = () => {
                         </TabsContent>
                     </Tabs>
                     : <div className="h-[50vh] grid place-items-center"><div className="font-bold text-xl text-center text-primary">No order availabel..</div></div>
+                    : null
             }
 
 
             {
-                loading && <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000]">
+                loading ?  <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000] absolute bg-white top-0 left-0 w-full">
                     <Loader size={50} />
-                </div>
+                </div>:null
             }
-
-
-
-
         </div>
     )
 }
