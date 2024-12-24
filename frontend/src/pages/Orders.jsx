@@ -109,17 +109,17 @@ const Orders = () => {
                                     </div>
 
                                     {
-                                        orders[0]?.cancelOrder?.status?<span className="text-red-500 font-bold inline-block text-base mt-2">Order cancelled successfully !!</span>:<button onClick={()=>{
+                                        orders[0]?.cancelOrder?.status ? <span className="text-red-500 font-bold inline-block text-base mt-2">Order cancelled successfully !!</span> : <button onClick={() => {
                                             setShowCancelOrder(true);
                                             setSelectedOrder(orders[0])
                                         }} className="bg-red-500 rounded-sm mt-4 px-6 py-3 text-base text-white hover:opacity-50 transition-all duration-300">
                                             <span className=" w-full h-full flex items-center justify-center">
-                                                Cancel Order 
+                                                Cancel Order
                                             </span>
                                         </button>
                                     }
 
-                                    
+
 
                                 </div>
                             </div>
