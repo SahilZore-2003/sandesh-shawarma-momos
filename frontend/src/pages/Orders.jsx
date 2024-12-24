@@ -10,13 +10,16 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import CancelOrder from "../components/CancelOrder";
 const Orders = () => {
     const { user } = JSON.parse(localStorage.getItem('user'))
     const { uid } = user;
     const { toast } = useToast()
     const [orders, setOrders] = useState([]);
+    console.log("🚀 ~ Orders ~ orders:", orders)
     const [loading, setLoading] = useState(false);
-
+    const [showCancelOrder, setShowCancelOrder] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
 
     const fetchAllOrdersForUser = async (userId) => {
@@ -105,6 +108,19 @@ const Orders = () => {
                                         <p>{orders[0]?.totalBill}</p>
                                     </div>
 
+                                    {
+                                        orders[0]?.cancelOrder?.status?<span className="text-red-500 font-bold inline-block text-base mt-2">Order cancelled successfully !!</span>:<button onClick={()=>{
+                                            setShowCancelOrder(true);
+                                            setSelectedOrder(orders[0])
+                                        }} className="bg-red-500 rounded-sm mt-4 px-6 py-3 text-base text-white hover:opacity-50 transition-all duration-300">
+                                            <span className=" w-full h-full flex items-center justify-center">
+                                                Cancel Order 
+                                            </span>
+                                        </button>
+                                    }
+
+                                    
+
                                 </div>
                             </div>
                         </TabsContent>
@@ -164,10 +180,12 @@ const Orders = () => {
 
 
             {
-                loading ?  <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000] absolute bg-white top-0 left-0 w-full">
+                loading ? <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000] absolute bg-white top-0 left-0 w-full">
                     <Loader size={50} />
-                </div>:null
+                </div> : null
             }
+
+            <CancelOrder showCancelOrder={showCancelOrder} setShowCancelOrder={setShowCancelOrder} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} />
         </div>
     )
 }
