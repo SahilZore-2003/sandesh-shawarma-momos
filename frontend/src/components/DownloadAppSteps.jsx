@@ -3,7 +3,6 @@ import {
     DialogContent,
     DialogOverlay
 } from "@/components/ui/dialog";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import step1 from "../../public/step-1.jpg"
 import step2 from "../../public/step-2.jpg"
 import step3 from "../../public/step-3.jpg"
