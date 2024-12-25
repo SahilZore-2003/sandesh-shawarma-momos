@@ -3,4 +3,6 @@ import item2 from "./item2.png"
 import item3 from "./item3.png"
 import item4 from "./item4.png"
 
+// images import file change 
+
 export { item1, item2, item3, item4 }
