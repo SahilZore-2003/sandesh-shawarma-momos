@@ -79,6 +79,7 @@ const Profile = () => {
                 const addressData = docSnap.data();
                 setUserData(addressData)
                 setSelectedCity(addressData?.city || null)
+                localStorage.setItem('address', JSON.stringify(addressData))
             } else {
                 console.log(`No address data found for userId: ${userId}`);
                 return null;
@@ -124,13 +125,9 @@ const Profile = () => {
 
         try {
             setLoading(true);
-
-            // Reference the Firestore document
             const docRef = doc(db, "addresses", userId);
-
-            // Set the address data
             await setDoc(docRef, { ...userData, city: selectedCity });
-
+            localStorage.setItem('address', JSON.stringify({ ...userData, city: selectedCity }))
             toast({
                 title: "Address saved successfully",
                 description: "Now you can order food anytime!",

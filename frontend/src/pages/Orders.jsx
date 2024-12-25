@@ -11,12 +11,11 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import CancelOrder from "../components/CancelOrder";
-const Orders = () => {
+const Orders = ({setActiveIndex}) => {
     const { user } = JSON.parse(localStorage.getItem('user'))
     const { uid } = user;
     const { toast } = useToast()
     const [orders, setOrders] = useState([]);
-    console.log("🚀 ~ Orders ~ orders:", orders)
     const [loading, setLoading] = useState(false);
     const [showCancelOrder, setShowCancelOrder] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -50,6 +49,7 @@ const Orders = () => {
             console.error("Error fetching user orders:", error);
         } finally {
             setLoading(false)
+
         }
     };
 
@@ -61,6 +61,14 @@ const Orders = () => {
     }, [])
     return (
         <div className="relative pb-16">
+            {
+                loading && (
+                    <div className="min-h-[calc(100vh-100px)] grid place-items-center z-[10000] relative bg-white top-0 left-0 w-full">
+                        <Loader size={50} />
+                    </div>
+                )
+            }
+
             {
                 !loading ? orders?.length > 0 ?
                     <Tabs defaultValue="account" className="w-full">
@@ -178,14 +186,7 @@ const Orders = () => {
                     : null
             }
 
-
-            {
-                loading ? <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000] absolute bg-white top-0 left-0 w-full">
-                    <Loader size={50} />
-                </div> : null
-            }
-
-            <CancelOrder showCancelOrder={showCancelOrder} setShowCancelOrder={setShowCancelOrder} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} />
+            <CancelOrder setActiveIndex={setActiveIndex}  showCancelOrder={showCancelOrder} setShowCancelOrder={setShowCancelOrder} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} />
         </div>
     )
 }

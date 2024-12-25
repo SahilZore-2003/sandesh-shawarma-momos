@@ -14,8 +14,8 @@ const Home = () => {
 
     const components = [
         <HomeContent />,
-        <Orders />,
-        <Profile />,
+        <Orders setActiveIndex={setActiveIndex} />,
+        <Profile  />,
         <Cart setActiveIndex={setActiveIndex} />,
     ]
     return (
