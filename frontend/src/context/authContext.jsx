@@ -19,7 +19,11 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (!currentUser) {
             navigate("/register");
+        } else {
+            localStorage.setItem('user', JSON.stringify(currentUser))
+            navigate("/")
         }
+
     }, [currentUser, navigate]);
 
     const value = {

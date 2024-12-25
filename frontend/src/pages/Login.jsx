@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { GoEye, GoEyeClosed } from 'react-icons/go';
 import { HiOutlineMail } from 'react-icons/hi';
 import { LuCircleUserRound } from "react-icons/lu";
-import { doSignInWithEmailAndPassword, resetPasswordWithEmail } from "../firebase/auth"
+import { doSignInWithEmailAndPassword, doSignInWithGoogle, resetPasswordWithEmail } from "../firebase/auth"
 import Loader from '../loaders/Loader';
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/authContext';
+import { FcGoogle } from 'react-icons/fc';
 
 
 const Login = () => {
@@ -14,7 +16,8 @@ const Login = () => {
         "password": ""
     });
     const navigate = useNavigate()
-
+    const { setCurrentUser
+    } = useAuth()
 
     const [userData, setUserData] = useState({
         "email": "",
@@ -28,6 +31,16 @@ const Login = () => {
     const handleChange = event => {
         const { value, name } = event.target;
         setUserData((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const handleSigninWithGoogle = async () => {
+        try {
+            const result = await doSignInWithGoogle()
+            setCurrentUser(result)
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     const handleValidateData = () => {
@@ -67,7 +80,7 @@ const Login = () => {
         try {
             setLoading(true)
             const userCredentials = await doSignInWithEmailAndPassword(userData.email, userData.password)
-            localStorage.setItem("user", JSON.stringify(userCredentials))
+            localStorage.setItem("user", JSON.stringify(userCredentials?.user))
             toast({
                 title: "Login Successfully",
                 description: "thanks for showing trust on me!!",
@@ -151,6 +164,8 @@ const Login = () => {
                         </div> : "Login"
                     }
                 </button>
+
+                <button onClick={handleSigninWithGoogle} className='w-full border-2 border-primary rounded-md text-primary p-2 flex items-center justify-center'><FcGoogle size={20} className='mx-2' /> Login with google</button>
             </div>
         </div>
     )

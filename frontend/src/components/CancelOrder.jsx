@@ -14,14 +14,15 @@ import { doc, updateDoc } from "firebase/firestore"
 const CancelOrder = ({
     showCancelOrder,
     setShowCancelOrder,
-    selectedOrder
+    selectedOrder,
+    setActiveIndex
+
 }) => {
     let user = localStorage.getItem('user')
     if (user) {
         user = JSON.parse(user)?.user
     }
     const { toast } = useToast()
-    console.log(selectedOrder, "selectedOrder")
     const [cancelStatus, setCancelStatus] = useState({
         status: false,
         reasons: [false, false, false, false, false]
@@ -51,6 +52,7 @@ const CancelOrder = ({
                 description: "Buy something new item",
                 className: "bg-green-400 text-white",
             });
+            setActiveIndex(0)
             setShowCancelOrder(false)
 
         } catch (error) {

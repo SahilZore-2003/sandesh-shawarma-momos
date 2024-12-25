@@ -11,12 +11,10 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import CancelOrder from "../components/CancelOrder";
-const Orders = () => {
-    const { user } = JSON.parse(localStorage.getItem('user'))
-    const { uid } = user;
+const Orders = ({setActiveIndex}) => {
+    const { uid } = JSON.parse(localStorage.getItem('user'))
     const { toast } = useToast()
     const [orders, setOrders] = useState([]);
-    console.log("🚀 ~ Orders ~ orders:", orders)
     const [loading, setLoading] = useState(false);
     const [showCancelOrder, setShowCancelOrder] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -50,6 +48,7 @@ const Orders = () => {
             console.error("Error fetching user orders:", error);
         } finally {
             setLoading(false)
+
         }
     };
 
@@ -61,6 +60,14 @@ const Orders = () => {
     }, [])
     return (
         <div className="relative pb-16">
+            {
+                loading && (
+                    <div className="min-h-[calc(100vh-100px)] grid place-items-center z-[10000] relative bg-white top-0 left-0 w-full">
+                        <Loader size={50} />
+                    </div>
+                )
+            }
+
             {
                 !loading ? orders?.length > 0 ?
                     <Tabs defaultValue="account" className="w-full">
@@ -109,17 +116,17 @@ const Orders = () => {
                                     </div>
 
                                     {
-                                        orders[0]?.cancelOrder?.status?<span className="text-red-500 font-bold inline-block text-base mt-2">Order cancelled successfully !!</span>:<button onClick={()=>{
+                                        orders[0]?.cancelOrder?.status ? <span className="text-red-500 font-bold inline-block text-base mt-2">Order cancelled successfully !!</span> : <button onClick={() => {
                                             setShowCancelOrder(true);
                                             setSelectedOrder(orders[0])
                                         }} className="bg-red-500 rounded-sm mt-4 px-6 py-3 text-base text-white hover:opacity-50 transition-all duration-300">
                                             <span className=" w-full h-full flex items-center justify-center">
-                                                Cancel Order 
+                                                Cancel Order
                                             </span>
                                         </button>
                                     }
 
-                                    
+
 
                                 </div>
                             </div>
@@ -178,14 +185,7 @@ const Orders = () => {
                     : null
             }
 
-
-            {
-                loading ? <div className="min-h-[calc(100vh-92px)] grid place-items-center z-[10000] absolute bg-white top-0 left-0 w-full">
-                    <Loader size={50} />
-                </div> : null
-            }
-
-            <CancelOrder showCancelOrder={showCancelOrder} setShowCancelOrder={setShowCancelOrder} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} />
+            <CancelOrder setActiveIndex={setActiveIndex}  showCancelOrder={showCancelOrder} setShowCancelOrder={setShowCancelOrder} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} />
         </div>
     )
 }

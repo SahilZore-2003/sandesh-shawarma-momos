@@ -4,24 +4,27 @@ import { FaMinus, FaPencil, FaPlus } from "react-icons/fa6"
 import { useCart, } from "@context/cartContext"
 import { useRazorpay } from "react-razorpay";
 import { useToast } from "../hooks/use-toast"
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../loaders/Loader";
+import { useNavigate } from "react-router-dom";
+import success from "../../public/success.mp3"
 
 
 const Cart = ({ setActiveIndex }) => {
-    const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart } = useCart()
+    const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart, cleanCart } = useCart()
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
     }, 0);
     const { Razorpay } = useRazorpay();
-    const { user } = JSON.parse(localStorage.getItem('user'))
-    const { uid, email } = user;
+    const { uid, email } = JSON.parse(localStorage.getItem('user'))
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
     const sendMessages = false;
+    const [address, setAddress] = useState(null);
+    
 
     const handlePaymentChange = (e) => {
         setPaymentMethod(e.target.value);
@@ -80,6 +83,10 @@ const Cart = ({ setActiveIndex }) => {
             });
             sendSms()
             setLoading(false)
+            cleanCart()
+            const audio = document.createElement("audio");
+            audio.src = success;
+            audio.play()
             setActiveIndex(1)
         } catch (error) {
             console.error("Error storing order:", error);
@@ -121,7 +128,11 @@ const Cart = ({ setActiveIndex }) => {
                 description: "Your order has been placed.",
                 className: "bg-green-400 text-white",
             });
+            cleanCart()
             sendSms()
+            const audio = document.createElement("audio");
+            audio.src = success;
+            audio.play()
             setActiveIndex(1)
         } catch (error) {
             console.error("Error storing order:", error);
@@ -155,7 +166,6 @@ const Cart = ({ setActiveIndex }) => {
         }
 
     }
-
 
     const handlePayment = async () => {
         setLoading(true)
@@ -198,6 +208,49 @@ const Cart = ({ setActiveIndex }) => {
 
     };
 
+    const handleFetchUserAddress = async () => {
+        try {
+            setLoading(true)
+            if (!uid) {
+                toast({
+                    title: `Can't find user with ${userId}`,
+                    description: "please login again",
+                    className: "bg-green-400 text-white",
+                });
+                return null;
+            }
+            const docRef = doc(db, "addresses", uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const addressData = docSnap.data();
+                setAddress(addressData)
+                localStorage.setItem('address', JSON.stringify(addressData))
+            } else {
+                console.log(`No address data found for userId: ${userId}`);
+                return null;
+            }
+        } catch (error) {
+            console.log(error)
+            toast({
+                title: `Can't find user with ${uid}`,
+                description: "please login again",
+                className: "bg-green-400 text-white",
+            });
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        const address = JSON.parse(localStorage.getItem('address'))
+        if (address) {
+            return setAddress(address)
+        } else {
+            handleFetchUserAddress()
+        }
+
+    }, [])
+
 
 
     return (
@@ -235,14 +288,27 @@ const Cart = ({ setActiveIndex }) => {
                     }
 
                     <div className="mt-5 space-y-3">
+
                         {/* address details  */}
-                        <div>
-                            <h1 className="font-bold text-primaryText text-lg">Address</h1>
-                            <div className="flex items-center gap-2 border border-border p-2 rounded-md">
-                                <p>Sadguru apartment room no:34 Dhabasi vasti....</p>
-                                <span><FaPencil className="fill-primaryText cursor-pointer hover:fill-secondary" size={20} /></span>
-                            </div>
-                        </div>
+                        {
+                            address && (
+                                <div>
+                                    <h1 className="font-bold text-primaryText text-lg">Address</h1>
+                                    <div className="flex items-center gap-2 border border-border p-2 rounded-md">
+                                        <div className="basis-[80%]">
+                                            <b>{`${address?.name}`}</b>
+                                            <p>{address?.building},</p>
+                                            <p className="font-semibold">{address?.area},{address?.city?.value}</p>
+                                            {/* <p><span className="font-semibold">landmark</span>: {address?.landmark}</p> */}
+                                        </div>
+                                        <span onClick={() => {
+                                            setActiveIndex(2)
+                                        }} className="bg-primary border-2 basis-[10%] border-primaryText p-2 rounded-full"><FaPencil className="fill-primaryText cursor-pointer hover:fill-secondary" size={20} /></span>
+                                    </div>
+                                </div>
+                            )
+                        }
+
                         {/* order summary  */}
                         <div>
                             <h1 className="font-bold text-primaryText text-lg">Order Summary</h1>

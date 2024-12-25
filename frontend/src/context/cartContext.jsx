@@ -6,7 +6,7 @@ const CartContext = createContext()
 
 const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([])
-   
+
 
     const handleAddToCart = data => {
         const item = cart.find(item => item.name === data.name)
@@ -33,6 +33,10 @@ const CartProvider = ({ children }) => {
         setCart([...cart.filter((item) => item.name !== name)])
     }
 
+    const cleanCart = () => {
+        setCart([])
+    }
+
 
     const value = {
         cart,
@@ -40,7 +44,8 @@ const CartProvider = ({ children }) => {
         handleAddToCart,
         handleIncreaseQnt,
         handleDecreaseQnt,
-        handleRemoveFromCart
+        handleRemoveFromCart,
+        cleanCart
     }
 
 
