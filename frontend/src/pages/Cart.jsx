@@ -9,21 +9,16 @@ import { db } from "../firebase/firebase"
 import { useEffect, useState } from "react";
 import Loader from "../loaders/Loader";
 import { useNavigate } from "react-router-dom";
+import success from "../../public/success.mp3"
 
 
 const Cart = ({ setActiveIndex }) => {
-    const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart,cleanCart } = useCart()
+    const { cart, handleIncreaseQnt, handleDecreaseQnt, handleRemoveFromCart, cleanCart } = useCart()
     const total = cart.reduce((sum, item) => {
         return sum + item.quntity * parseFloat(item?.pricing[item?.type]);
     }, 0);
     const { Razorpay } = useRazorpay();
-    const { user } = JSON.parse(localStorage.getItem('user'))
-    let uid = "";
-    let email = "";
-    if (user) {
-        uid = user?.uid;
-        email = user?.email
-    }
+    const { uid, email } = JSON.parse(localStorage.getItem('user'))
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
@@ -89,6 +84,9 @@ const Cart = ({ setActiveIndex }) => {
             sendSms()
             setLoading(false)
             cleanCart()
+            const audio = document.createElement("audio");
+            audio.src = success;
+            audio.play()
             setActiveIndex(1)
         } catch (error) {
             console.error("Error storing order:", error);
@@ -132,6 +130,9 @@ const Cart = ({ setActiveIndex }) => {
             });
             cleanCart()
             sendSms()
+            const audio = document.createElement("audio");
+            audio.src = success;
+            audio.play()
             setActiveIndex(1)
         } catch (error) {
             console.error("Error storing order:", error);
@@ -300,8 +301,8 @@ const Cart = ({ setActiveIndex }) => {
                                             <p className="font-semibold">{address?.area},{address?.city?.value}</p>
                                             {/* <p><span className="font-semibold">landmark</span>: {address?.landmark}</p> */}
                                         </div>
-                                        <span onClick={()=>{
-                                           setActiveIndex(2)  
+                                        <span onClick={() => {
+                                            setActiveIndex(2)
                                         }} className="bg-primary border-2 basis-[10%] border-primaryText p-2 rounded-full"><FaPencil className="fill-primaryText cursor-pointer hover:fill-secondary" size={20} /></span>
                                     </div>
                                 </div>

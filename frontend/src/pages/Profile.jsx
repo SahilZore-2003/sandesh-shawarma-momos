@@ -54,8 +54,9 @@ const Profile = () => {
         navigate("/login")
     }
     let userId = localStorage?.getItem('user')
+    console.log("🚀 ~ Profile ~ userId:", userId)
     if (userId) {
-        userId = JSON.parse(userId).user?.uid;
+        userId = JSON.parse(userId).uid;
     }
     const [disabled, setDisabled] = useState(false);
 
@@ -210,12 +211,12 @@ const Profile = () => {
                 <div>
                     <label htmlFor="email" className="text-inputSecondary text-sm flex items-center gap-1"><HiOutlineMail size={12} />Your Name</label>
                     <div className="w-full mt-2 border-border border rounded-lg p-2 flex flex-col">
-                        <input type="text" name="email" onChange={(e) => {
+                        <input type="text" name="name" onChange={(e) => {
                             setUserData(prev => ({
                                 ...prev,
                                 name: e.target.value
                             }))
-                        }} value={userData?.name} placeholder="Enter your email" className="border-0 outline-0 text-base" />
+                        }} value={userData?.name} placeholder="Enter your name" className="border-0 outline-0 text-base" />
                     </div>
                     {errors?.name?.length > 0 &&
                         <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors?.name}*</small>}
@@ -230,7 +231,7 @@ const Profile = () => {
                                 ...prev,
                                 phone: e.target.value.replace(/\D/g, "")
                             }));
-                        }} value={userData?.phone} placeholder="Enter your email" className="border-0 outline-0 text-base" />
+                        }} value={userData?.phone} placeholder="Enter your phone" className="border-0 outline-0 text-base" />
                     </div>
                     {errors?.phone?.length > 0 &&
                         <small className="text-red-500 font-normal inline-block text-xs relative left-[2%]">{errors?.phone}*</small>}

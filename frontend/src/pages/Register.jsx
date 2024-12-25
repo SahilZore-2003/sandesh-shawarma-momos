@@ -1,9 +1,8 @@
 
 import UserInfo from "../components/register/UserInfo";
 
-
-
 const Register = () => {
+    
     return (
         <div className="min-h-screen grid place-items-center">
             <div className="p-4 my-4 w-full">

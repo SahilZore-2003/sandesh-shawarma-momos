@@ -12,8 +12,7 @@ import {
 } from "@/components/ui/tabs"
 import CancelOrder from "../components/CancelOrder";
 const Orders = ({setActiveIndex}) => {
-    const { user } = JSON.parse(localStorage.getItem('user'))
-    const { uid } = user;
+    const { uid } = JSON.parse(localStorage.getItem('user'))
     const { toast } = useToast()
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);

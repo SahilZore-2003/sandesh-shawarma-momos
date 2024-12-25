@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GoEye, GoEyeClosed } from 'react-icons/go';
 import { HiOutlineMail } from 'react-icons/hi';
 import { LuCircleUserRound } from "react-icons/lu";
-import { MdOutlinePhonelinkRing } from 'react-icons/md';
 import { doCreateUserWithEmailAndPassword } from "../../firebase/auth"
 import { Link, useNavigate } from 'react-router-dom';
-
+import { FcGoogle } from "react-icons/fc";
 import Loader from '../../loaders/Loader';
 import { useToast } from "@/hooks/use-toast"
+import { doSignInWithGoogle } from "../../firebase/auth"
+import { useAuth } from "../../context/authContext";
 
 
 const UserInfo = () => {
+    const {setCurrentUser
+    } = useAuth()
+   
     const [errors, setErrors] = useState({
         "email": "",
         "name": "",
@@ -112,6 +116,16 @@ const UserInfo = () => {
 
     }
 
+    const handleSigninWithGoogle = async () => {
+        try {
+            const result = await doSignInWithGoogle()
+            setCurrentUser(result)
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
 
 
     return (
@@ -176,6 +190,8 @@ const UserInfo = () => {
                 }
 
             </button>
+
+            <button onClick={handleSigninWithGoogle} className='w-full border-2 border-primary rounded-md text-primary p-2 flex items-center justify-center'><FcGoogle size={20} className='mx-2' /> Login with google</button>
 
             <div className='text-sm'>Already have an account <Link to="/login" className='text-primaryText font-bold underline'>Login Here</Link></div>
 

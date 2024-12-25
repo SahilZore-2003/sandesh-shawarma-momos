@@ -67,7 +67,7 @@ const Login = () => {
         try {
             setLoading(true)
             const userCredentials = await doSignInWithEmailAndPassword(userData.email, userData.password)
-            localStorage.setItem("user", JSON.stringify(userCredentials))
+            localStorage.setItem("user", JSON.stringify(userCredentials?.user))
             toast({
                 title: "Login Successfully",
                 description: "thanks for showing trust on me!!",
