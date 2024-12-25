@@ -5,7 +5,7 @@ import { LuCircleUserRound } from "react-icons/lu";
 import { doSignInWithEmailAndPassword, doSignInWithGoogle, resetPasswordWithEmail } from "../firebase/auth"
 import Loader from '../loaders/Loader';
 import { useToast } from "@/hooks/use-toast"
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -113,7 +113,7 @@ const Login = () => {
 
         toast({
             title: `"Link sent to ${userData?.email} email"`,
-            description: "please very and reset your password",
+            description: "please verify and reset your password",
             className: "bg-green-400 text-white "
         })
     }
@@ -155,7 +155,10 @@ const Login = () => {
 
                 </div>
 
-                <span onClick={handleForgotPassword} className='text-red-400 text-sm cursor-pointer font-semibold hover:underline inline-block'>Forgot Password ?</span>
+                <div className='flex flex-col gap-1'>
+                    <span onClick={handleForgotPassword} className='text-red-400 text-sm cursor-pointer font-semibold hover:underline inline-block'>Forgot Password ?</span> 
+                    <Link to={"/register"}className='text-primary underline text-sm cursor-pointer font-semibold hover:underline inline-block'>Go to register page</Link>
+                </div>
                 <button onClick={handleLoginUser} className={`w-full flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md hover:opacity-50 transition-opacity duration-200 ${loading ? "pointer-events-none opacity-50" : "pointer-events-auto opacity-100"}`}>
                     {
                         loading ? <div className='flex items-center gap-2'>

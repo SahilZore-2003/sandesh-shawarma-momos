@@ -4,11 +4,10 @@ import { FaMinus, FaPencil, FaPlus } from "react-icons/fa6"
 import { useCart, } from "@context/cartContext"
 import { useRazorpay } from "react-razorpay";
 import { useToast } from "../hooks/use-toast"
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase"
 import { useEffect, useState } from "react";
 import Loader from "../loaders/Loader";
-import { useNavigate } from "react-router-dom";
 import success from "../../public/success.mp3"
 
 
@@ -24,7 +23,7 @@ const Cart = ({ setActiveIndex }) => {
     const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
     const sendMessages = false;
     const [address, setAddress] = useState(null);
-    
+
 
     const handlePaymentChange = (e) => {
         setPaymentMethod(e.target.value);
@@ -208,45 +207,45 @@ const Cart = ({ setActiveIndex }) => {
 
     };
 
-    const handleFetchUserAddress = async () => {
-        try {
-            setLoading(true)
-            if (!uid) {
-                toast({
-                    title: `Can't find user with ${userId}`,
-                    description: "please login again",
-                    className: "bg-green-400 text-white",
-                });
-                return null;
-            }
-            const docRef = doc(db, "addresses", uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const addressData = docSnap.data();
-                setAddress(addressData)
-                localStorage.setItem('address', JSON.stringify(addressData))
-            } else {
-                console.log(`No address data found for userId: ${userId}`);
-                return null;
-            }
-        } catch (error) {
-            console.log(error)
-            toast({
-                title: `Can't find user with ${uid}`,
-                description: "please login again",
-                className: "bg-green-400 text-white",
-            });
-        } finally {
-            setLoading(false)
-        }
-    }
+    // const handleFetchUserAddress = async () => {
+    //     try {
+    //         setLoading(true)
+    //         if (!uid) {
+    //             toast({
+    //                 title: `Can't find user with ${userId}`,
+    //                 description: "please login again",
+    //                 className: "bg-green-400 text-white",
+    //             });
+    //             return null;
+    //         }
+    //         const docRef = doc(db, "addresses", uid);
+    //         const docSnap = await getDoc(docRef);
+    //         if (docSnap.exists()) {
+    //             const addressData = docSnap.data();
+    //             setAddress(addressData)
+    //             localStorage.setItem('address', JSON.stringify(addressData))
+    //         } else {
+    //             console.log(`No address data found for userId: ${userId}`);
+    //             return null;
+    //         }
+    //     } catch (error) {
+    //         console.log(error)
+    //         toast({
+    //             title: `Can't find user with ${uid}`,
+    //             description: "please login again",
+    //             className: "bg-red-400 text-white",
+    //         });
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     useEffect(() => {
         const address = JSON.parse(localStorage.getItem('address'))
         if (address) {
             return setAddress(address)
         } else {
-            handleFetchUserAddress()
+            setActiveIndex(2)
         }
 
     }, [])
