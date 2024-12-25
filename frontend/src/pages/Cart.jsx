@@ -24,7 +24,7 @@ const Cart = ({ setActiveIndex }) => {
     const [paymentMethod, setPaymentMethod] = useState("cash on delivery");
     const sendMessages = false;
     const [address, setAddress] = useState(null);
-    const navigate = useNavigate()
+    
 
     const handlePaymentChange = (e) => {
         setPaymentMethod(e.target.value);

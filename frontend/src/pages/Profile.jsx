@@ -54,7 +54,7 @@ const Profile = () => {
         navigate("/login")
     }
     let userId = localStorage?.getItem('user')
-    console.log("🚀 ~ Profile ~ userId:", userId)
+
     if (userId) {
         userId = JSON.parse(userId).uid;
     }
