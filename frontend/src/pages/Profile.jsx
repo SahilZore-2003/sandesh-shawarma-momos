@@ -51,6 +51,7 @@ const Profile = () => {
     const [loading, setLoading] = useState(false);
     const handleLogout = () => {
         localStorage.setItem('user', null)
+        localStorage.setItem('address', null)
         navigate("/login")
     }
     let userId = localStorage?.getItem('user')
